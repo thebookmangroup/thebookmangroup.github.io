@@ -3163,6 +3163,16 @@ section.people {
     font-size: 12px;
     margin-top: 6px;
   }
+  .series .sr:hover {
+    transform: none;
+    box-shadow: none;
+  }
+  .series .sr:hover .sr-stack .cover:nth-child(2) {
+    transform: translateX(10px) scale(.92);
+  }
+  .series .sr:hover .sr-stack .cover:nth-child(3) {
+    transform: translateX(22px) scale(.84);
+  }
 }
 @media (max-width: 860px) {
   .flow .fl-row {
