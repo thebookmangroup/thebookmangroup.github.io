@@ -56,6 +56,16 @@ const IMPRINTS = [
   { name: "머묾", ko: "오래 머무는 세계문학", en: "World classics to linger over" },
   { name: "북크레용", ko: "아이와 부모를 위한 책", en: "For children and parents" }
 ];
+const IMPRINT_PIN = {
+  "북모먼트": ["9791124038826", "2026-12-31"],
+  // 머니 트렌드 2027 — 올해 12월까지
+  "북플레저": ["9791124038413", "2026-10-31"],
+  // 품격 있는 대화를 위한 지식 브리핑 (10만 부 기념 특별 한정판)
+  "북로망스": ["9791124038192", "2026-10-31"],
+  // 나의 완벽한 장례식
+  "북파머스": ["9791124038888", "2026-10-31"]
+};
+const IMPRINT_TINT = { "북로망스": "#e07a95", "북플레저": "#5e9e6e", "북모먼트": "#c8553d", "북파머스": "#e0b42a", "머묾": "#8a5a3c", "북크레용": "#4f8fd0" };
 const IMPRINT_SLUG = { "북로망스": "book-romance", "북플레저": "book-pleasure", "북모먼트": "book-moment", "북파머스": "book-farmers", "머묾": "meomum", "북크레용": "book-crayon" };
 const MAIL = { rights: "rights@thebookman.co.kr", main: "tbmg@thebookman.co.kr" };
 const CAT = {
@@ -1130,7 +1140,12 @@ function about() {
     <section class="sec mist"><div class="wrap">${secHd(LANG === "en" ? "Imprints" : "브랜드", LANG === "en" ? "Six imprints, one house" : "여섯 개의 출판 브랜드")}
       <div class="imx">${IMPRINTS.map((im, i) => {
     const L = sorted.filter((b) => b.brand === im.name), h = (SNS.find((x) => x.name === im.name) || {}).handle;
-    const fan = L.slice(0, 5), mid = (fan.length - 1) / 2, tint = TINTS[(L[0] || {}).isbn] || "";
+    const pn = IMPRINT_PIN[im.name], pin = pn && TODAY <= pn[1] && L.find((b) => b.isbn === pn[0]);
+    const pick = (pin ? [pin, ...L.filter((b) => b !== pin)] : L).slice(0, 5), mid = (pick.length - 1) / 2, fan = [];
+    [...pick.keys()].sort((a, b) => Math.abs(a - mid) - Math.abs(b - mid) || a - b).forEach((j, r) => {
+      fan[j] = pick[r];
+    });
+    const tint = IMPRINT_TINT[im.name] || "";
     return `<a class="imc fade" href="#/imprint/${IMPRINT_SLUG[im.name]}" style="${tint ? `--tint:${tint}` : ""}"><div class="imc-hd"><span>${String(i + 1).padStart(2, "0")}</span><span>${IMPRINT_SLUG[im.name].replace("-", " ")}</span></div>
           <h3>${esc(brandName(im.name))}</h3><p>${esc(LANG === "en" ? im.en : im.ko)}</p><div class="imc-m">${t("count")(L.length)}${h ? " · @" + h : ""}</div>
           <div class="imc-fan">${fan.map((b, j) => coverHtml(b).replace('<div class="cover">', `<div class="cover" style="--k:${j - mid};--a:${Math.abs(j - mid)}">`)).join("")}</div></a>`;

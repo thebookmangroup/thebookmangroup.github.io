@@ -3406,11 +3406,12 @@ section.people {
   overflow: hidden;
   color: inherit;
   border-radius: 4px;
-  background: color-mix(in srgb, var(--tint,#d9d6cf) 12%, var(--paper));
+  background: color-mix(in srgb, var(--tint,#d9d6cf) 8%, var(--paper));
   transition: background .5s;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--tint,#d9d6cf) 22%, var(--paper));
 }
 .imc:hover {
-  background: color-mix(in srgb, var(--tint,#d9d6cf) 20%, var(--paper));
+  background: color-mix(in srgb, var(--tint,#d9d6cf) 13%, var(--paper));
 }
 .imc-hd {
   display: flex;
