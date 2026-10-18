@@ -4584,6 +4584,239 @@ html.grain body::after {
   max-width: 760px;
   margin: 0;
 }
+.adp-g {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 56px;
+  align-items: start;
+  margin-top: 24px;
+}
+.adp-g .adp {
+  margin-top: 0;
+  max-width: none;
+}
+.adp-g .adb {
+  max-width: none;
+}
+.adf {
+  border: 1px solid var(--ink);
+  background: var(--paper);
+  position: sticky;
+  top: 96px;
+}
+.adf-h {
+  font-size: 12px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  padding: 16px 22px;
+  border-bottom: 1px solid var(--ink);
+}
+.adf dl {
+  margin: 0;
+  padding: 6px 22px;
+}
+.adf dl > div {
+  display: grid;
+  grid-template-columns: 68px minmax(0, 1fr);
+  gap: 12px;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--rule);
+}
+.adf dl > div:last-child {
+  border-bottom: 0;
+}
+.adf dt {
+  font-size: 12px;
+  color: var(--t4);
+  padding-top: 2px;
+}
+.adf dd {
+  margin: 0;
+  font-size: 14px;
+  color: var(--ink);
+  line-height: 1.55;
+}
+.adf dd small {
+  display: block;
+  font-size: 12px;
+  color: var(--t3);
+  margin-top: 3px;
+}
+.adf-talk {
+  border-top: 1px solid var(--ink);
+  padding: 18px 22px 20px;
+  background: var(--mist);
+}
+.adf-talk b {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+}
+.adf-talk p {
+  font-size: 13px;
+  color: var(--t3);
+  margin: 6px 0 12px;
+  line-height: 1.6;
+}
+.adf-talk a {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  border-bottom: 1px solid var(--ink);
+  padding-bottom: 2px;
+}
+.adq {
+  margin: 56px 0 0;
+  padding: 32px 0 0 132px;
+  position: relative;
+  border-top: 1px solid var(--rule);
+}
+.adq:before {
+  content: "“";
+  position: absolute;
+  left: 0;
+  top: 18px;
+  font-family: var(--serif);
+  font-size: 88px;
+  line-height: 1;
+  color: var(--gold);
+}
+.adq blockquote {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: 22px;
+  line-height: 1.75;
+  color: var(--ink);
+  font-weight: 300;
+  word-break: keep-all;
+}
+.adq figcaption {
+  font-size: 13px;
+  color: var(--t3);
+  margin-top: 16px;
+}
+.abks {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+.abks.one {
+  grid-template-columns: 1fr;
+}
+.abks.one .abk {
+  grid-template-columns: 180px minmax(0, 1fr);
+  gap: 48px;
+  padding: 36px 40px;
+}
+.abks.one .abk-t h3 {
+  font-size: 30px;
+}
+.abks.one .abk-t p {
+  font-size: 15px;
+  max-width: 720px;
+}
+.abk {
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr);
+  gap: 32px;
+  align-items: center;
+  padding: 28px;
+  border: 1px solid var(--ink);
+  background: var(--paper);
+  color: inherit;
+  transition: transform .2s, box-shadow .2s;
+}
+.abk:hover {
+  transform: translate(-4px, -4px);
+  box-shadow: 4px 4px 0 var(--ink);
+}
+.abk-c .cover {
+  width: 100%;
+}
+.abk-t h3 {
+  font-size: 24px;
+  line-height: 1.35;
+  margin: 8px 0 0;
+  font-weight: 400;
+  word-break: keep-all;
+}
+.abk-t p {
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--t3);
+  margin: 12px 0 0;
+  word-break: keep-all;
+}
+.abk-go {
+  display: inline-block;
+  margin-top: 18px;
+  font-size: 13px;
+  font-weight: 600;
+  border-bottom: 1px solid var(--ink);
+  padding-bottom: 2px;
+}
+@media (max-width: 1100px) {
+  .adp-g {
+    grid-template-columns: minmax(0, 1fr) 260px;
+    gap: 36px;
+  }
+  .adq {
+    padding-left: 0;
+    padding-top: 64px;
+  }
+  .adq:before {
+    top: 20px;
+  }
+}
+@media (max-width: 860px) {
+  .adp-g {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  .adf {
+    position: static;
+  }
+  .adf-talk {
+    display: none;
+  }
+  .abks {
+    grid-template-columns: 1fr;
+  }
+  .abks.one .abk {
+    grid-template-columns: 120px minmax(0, 1fr);
+    gap: 24px;
+    padding: 24px;
+  }
+  .abks.one .abk-t h3 {
+    font-size: 22px;
+  }
+}
+@media (max-width: 640px) {
+  .adq blockquote {
+    font-size: 18px;
+  }
+  .abk {
+    grid-template-columns: 96px minmax(0, 1fr);
+    gap: 18px;
+    padding: 18px;
+  }
+  .abk-t h3 {
+    font-size: 18px;
+  }
+  .abk-t p {
+    font-size: 13px;
+    -webkit-line-clamp: 3;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .abk {
+    transition: none;
+  }
+}
 @media (max-width: 760px) {
   .adp-w {
     padding: 36px 0 56px;

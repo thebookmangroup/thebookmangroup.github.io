@@ -1079,19 +1079,58 @@ function authorPage(id) {
   const L = auBooks(a);
   const bio = String((LANG === "en" ? a.en_bio : a.bio) || "").replace(/^[\s\S]*?\.\.\.\s*더보기\s+([\s\S]*?)\s*접기\s*$/, "$1").replace(/\s*\.\.\.\s*더보기[\s\S]*$/, "").trim();
   const brands = [...new Set(L.map((b) => brandName(b.brand)))].join(" · ");
+  const en = LANG === "en";
+  const yrs = L.map((b) => (b.pub || "").slice(0, 4)).filter(Boolean).sort();
+  const yr = yrs.length ? yrs[0] === yrs[yrs.length - 1] ? yrs[0] : `${yrs[0]} — ${yrs[yrs.length - 1]}` : "";
+  const nat = [...new Set(WORLD_BOOKS.filter((w) => (w.isbns || [w.isbn]).some((i) => a.isbns.includes(i))).flatMap((w) => w.countries.map((c) => en ? c.en : c.ko)))];
+  const q = QUOTES.find((x) => a.isbns.includes(x.isbn) && byIsbn[x.isbn]);
+  const facts = [
+    a.jobs && a.jobs.length && !en ? ["분야", esc(a.jobs.join(" · "))] : null,
+    [en ? "Books" : "펴낸 책", t("vols")(L.length)],
+    brands ? [en ? "Imprint" : "브랜드", esc(brands)] : null,
+    yr ? [en ? "Published" : "펴낸 해", yr] : null,
+    nat.length ? [en ? "Rights sold" : "판권", `${en ? nat.length + (nat.length > 1 ? " countries" : " country") : nat.length + "개 나라"}<small>${esc(nat.slice(0, 6).join(", "))}${nat.length > 6 ? en ? " and more" : " 외" : ""}</small>`] : null
+  ].filter(Boolean);
+  const short = (b, n) => {
+    if (en) return b.en && (b.en.en_tagline || b.en.en_pitch) || "";
+    const d = String(b.desc || "").replace(/\.{3}|…/g, "").replace(/\s+/g, " ").trim();
+    if (d.length <= n) return d;
+    const ss = d.match(/[^.!?。]+[.!?。]+[”"’」』)]*\s*/g) || [];
+    let o = "";
+    for (const x of ss) {
+      if ((o + x).length > n) break;
+      o += x;
+    }
+    return o.trim() || d.slice(0, n).replace(/\s\S*$/, "") + "…";
+  };
+  const feat = (b) => `<a class="abk" href="#/book/${b.isbn}"><div class="abk-c">${coverHtml(b)}</div><div class="abk-t"><div class="kicker">${esc(brandName(b.brand))}${b.pub ? " · " + esc(b.pub.slice(0, 4)) : ""}</div>
+      <h3>${esc(en && b.en && b.en.en_title ? b.en.en_title : b.title)}</h3>${short(b, L.length === 1 ? 260 : 130) ? `<p>${esc(short(b, L.length === 1 ? 260 : 130))}</p>` : ""}<span class="abk-go">${en ? "View book" : "책 보기"} →</span></div></a>`;
+  const myBr = new Set(L.map((b) => b.brand));
+  const pool = authorsRanked.filter((x) => x.id !== a.id && x.photo && auBooks(x).length);
+  const more = [...pool.filter((x) => auBooks(x).some((b) => myBr.has(b.brand))), ...pool.filter((x) => !auBooks(x).some((b) => myBr.has(b.brand)))].slice(0, 3);
+  const mini = (x) => `<a class="apc" href="#/author/${x.id}"><div class="apc-ph"><img src="authors/${x.id}.jpg" alt="" loading="lazy" decoding="async" onerror="this.remove()"></div>
+      <div class="apc-tx"><div class="apc-k"></div><div class="apc-n">${esc(auName(x))}</div><div class="apc-j">${esc(auJob(x)) || "&nbsp;"}</div><div class="apc-m">${t("vols")(auBooks(x).length)}</div></div><div class="apc-bk">${auBooks(x).slice(0, 3).map((b) => coverHtml(b)).join("")}</div></a>`;
   return `<div class="wrap"><div class="adp-w">
       <div class="crumb"><a href="#/authors">${t("authors")}</a></div>
+      <div class="adp-g"><div class="adp-main">
       <div class="adp"><div class="adp-ph">${a.photo ? `<img src="authors/${a.id}.jpg" alt="" decoding="async" onload="if(this.naturalWidth<200)this.parentNode.classList.add('lo')" onerror="this.remove()">` : `<span>${esc((auName(a) || "?")[0])}</span>`}</div>
-        <div class="adp-tx"><div class="kicker">${esc(LANG === "ko" ? (a.jobs || []).join(" · ") : "") || "Author"}</div><h1>${esc(auName(a))}</h1>${LANG === "en" ? `<div class="ko">${esc(a.name)}</div>` : ""}
+        <div class="adp-tx"><div class="kicker">${esc(LANG === "ko" ? (a.jobs || []).join(" · ") : "") || "Author"}</div><h1>${esc(auName(a))}</h1>${en ? `<div class="ko">${esc(a.name)}</div>` : ""}
           <div class="adp-m">${t("vols")(L.length)}${brands ? " · " + esc(brands) : ""}</div></div>
         <a class="btn ink adp-b" href="${lectureMail(a)}">${t("talk")} →</a></div>
-      ${a.photo && PHOTO_SRC[a.photo_src] ? `<div class="ph-src adp-src">${esc(PHOTO_SRC[a.photo_src][LANG === "en" ? 1 : 0])}</div>` : ""}
-      ${bio ? `<div class="adb"><div class="adb-k">${LANG === "en" ? "About the author" : "작가 소개"}</div><div class="bio">${esc(bio)}</div></div>` : ""}
+      ${a.photo && PHOTO_SRC[a.photo_src] ? `<div class="ph-src adp-src">${esc(PHOTO_SRC[a.photo_src][en ? 1 : 0])}</div>` : ""}
+      ${bio ? `<div class="adb"><div class="adb-k">${en ? "About the author" : "작가 소개"}</div><div class="bio">${esc(bio)}</div></div>` : ""}
+      ${q && !en ? `<figure class="adq"><blockquote>${esc(q.text)}</blockquote><figcaption>— 『${esc(byIsbn[q.isbn].title)}』${q.pages ? " " + esc(q.pages) : ""}</figcaption></figure>` : ""}
+      </div>
+      <aside class="adf"><div class="adf-h">${en ? "At a glance" : "한눈에"}</div>
+        <dl>${facts.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join("")}</dl>
+        <div class="adf-talk"><b>${en ? "Talks · book events · interviews" : "강연 · 북토크 · 인터뷰"}</b><p>${en ? "Send us a request and we will pass it on to the author." : "요청을 받아 작가님께 전해 드립니다."}</p><a href="${lectureMail(a)}">${t("talk")} →</a></div>
+      </aside></div>
     </div></div>
-    <section class="sec mist" style="padding:88px 0"><div class="wrap">${secHd(LANG === "en" ? "Books" : "책", LANG === "en" ? "Books" : "이 작가의 책")}<div class="grid">${L.map(cardHtml).join("")}</div>${(() => {
+    <section class="sec mist" style="padding:88px 0"><div class="wrap">${secHd(en ? "Books" : "책", en ? "Books" : "이 작가의 책")}${L.length <= 2 ? `<div class="abks${L.length === 1 ? " one" : ""}">${L.map(feat).join("")}</div>` : `<div class="grid">${L.map(cardHtml).join("")}</div>`}${(() => {
     const seen = /* @__PURE__ */ new Set(), P = L.flatMap((b) => PREV[b.isbn] || []).filter((e) => !seen.has(e.img) && seen.add(e.img));
-    return P.length ? `<div style="margin-top:56px">${secHd("Editions", LANG === "en" ? "Earlier editions" : "이전 판", LANG === "en" ? "Original covers, before the redesign" : "리커버되기 전에 나왔던 판")}${prevHtml(P)}</div>` : "";
-  })()}</div></section>`;
+    return P.length ? `<div style="margin-top:56px">${secHd("Editions", en ? "Earlier editions" : "이전 판", en ? "Original covers, before the redesign" : "리커버되기 전에 나왔던 판")}${prevHtml(P)}</div>` : "";
+  })()}</div></section>
+    ${more.length ? `<section class="sec" style="padding:88px 0 72px"><div class="wrap">${secHd(en ? "Authors" : "작가", en ? "More authors" : "더 만나 볼 작가", "", `<a class="link" href="#/authors">${en ? "All authors" : "모든 작가"} →</a>`)}<div class="apx">${more.map(mini).join("")}</div></div></section>` : ""}`;
 }
 function worldPage(params) {
   const orig = BOOKS.filter((b) => b.original);
