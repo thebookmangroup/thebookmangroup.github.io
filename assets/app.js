@@ -1279,6 +1279,13 @@ const AUTHOR_NEWS = {
     press: [
       ["2021-01-27", "엄지사진관, 에세이 '좋은 건 같이 봐요' 출간", "스포츠동아", "https://sports.donga.com/article/all/20210127/105137318/2"]
     ]
+  },
+  "김진": {
+    press: [
+      ["2026-06-12", "김진 '품격 있는 대화를 위한 지식 브리핑' 4주째 1위", "뉴스1", "https://www.news1.kr/life-culture/book/6195419"],
+      ["2026-05-28", "‘품격있는 대화를 위한 지식 브리핑’ 종합 베스트셀러 1위", "조선에듀", "https://edu.chosun.com/m/edu_article.html?contid=2026052880051"],
+      ["2026-05-22", "김진 '지식 브리핑' 출간 즉시 1위…중장년 독자 움직였다", "노컷뉴스", "https://www.nocutnews.co.kr/news/6520898"]
+    ]
   }
 };
 function authorNews(a) {
