@@ -1378,6 +1378,13 @@ function goto(h) {
     });
   } else location.hash = h;
 }
+const LEGACY_IMWEB = /^\/(\d+|shop_[a-z_]+|board|bbs|product|products|shop|login|site_join|mypage|contact_us|blog|ko|en|_\w*)(\/|$)/i;
+if (PATHMODE) {
+  const lp = location.pathname.slice(window.__BASE.length) || "/";
+  if (LEGACY_IMWEB.test(lp) || /[?&](idx|bmode|q|page)=/.test(location.search) && lp === "/") {
+    if (lp !== "/" || location.search) history.replaceState(null, "", window.__BASE + "/");
+  }
+}
 function route() {
   const h = location.hash.slice(1) || (PATHMODE ? (location.pathname.slice(window.__BASE.length).replace(/\/+$/, "") || "/") + location.search : "") || "/";
   const [path, qs] = h.split("?");
