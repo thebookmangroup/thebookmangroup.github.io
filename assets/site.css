@@ -1962,6 +1962,26 @@ header {
     background: var(--paper);
   }
 }
+body::before {
+  content: "";
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: env(safe-area-inset-top, 0px);
+  background: var(--paper);
+  z-index: 45;
+  pointer-events: none;
+}
+header {
+  top: env(safe-area-inset-top, 0px);
+}
+body {
+  padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) 0 env(safe-area-inset-left, 0px);
+}
+.search-layer {
+  padding-top: env(safe-area-inset-top, 0px);
+}
 .nav {
   gap: 34px;
   font-size: 13px;
