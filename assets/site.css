@@ -1952,6 +1952,16 @@ header {
   background: rgba(250, 250, 248, .94);
   border-bottom: 1px solid var(--rule);
 }
+@media (max-width: 860px), (hover: none) and (pointer: coarse) {
+  header {
+    background: var(--paper);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  html {
+    background: var(--paper);
+  }
+}
 .nav {
   gap: 34px;
   font-size: 13px;
