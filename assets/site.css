@@ -3400,6 +3400,76 @@ section.people {
   opacity: 1;
   transform: none;
 }
+.anw-b {
+  display: grid;
+  grid-template-columns: 132px minmax(0, 1fr);
+  gap: 0;
+  margin-top: 48px;
+  max-width: 1000px;
+}
+.anw-b ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.anw-b li {
+  display: grid;
+  grid-template-columns: 88px minmax(0, 1fr);
+  gap: 14px;
+  padding: 7px 0;
+  font-size: 15px;
+  line-height: 1.55;
+}
+.anw-d {
+  color: var(--t4);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  padding-top: 2px;
+  white-space: nowrap;
+}
+.anw-t a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: var(--rule);
+  text-underline-offset: 4px;
+}
+.anw-t a:hover {
+  text-decoration-color: var(--accent);
+}
+.anw-t small {
+  display: block;
+  font-size: 12.5px;
+  color: var(--t3);
+  margin-top: 2px;
+}
+.anw-b details summary {
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--accent);
+  margin-top: 8px;
+  list-style: none;
+}
+.anw-b details summary::-webkit-details-marker {
+  display: none;
+}
+.anw-b details[open] summary {
+  display: none;
+}
+@media (max-width: 760px) {
+  .anw-b {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-top: 36px;
+  }
+  .anw-b li {
+    grid-template-columns: 78px minmax(0, 1fr);
+    gap: 8px;
+    font-size: 14px;
+  }
+  .anw-d {
+    font-size: 12px;
+  }
+}
 .au-inv {
   display: flex;
   justify-content: space-between;
@@ -4695,6 +4765,43 @@ html.grain body::after {
   font-size: 13px;
   color: var(--t3);
   margin-top: 16px;
+}
+.sauh {
+  margin: 8px 0 40px;
+  padding-bottom: 40px;
+  border-bottom: 1px solid var(--rule);
+}
+.sauh .apx {
+  padding: 12px 0 0;
+}
+.sauh.nb {
+  border: 0;
+  padding-bottom: 64px;
+}
+.sauh .apc-ph > span {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  font-weight: 300;
+  color: var(--accent);
+}
+.sauh > .link {
+  display: inline-block;
+  margin-top: 16px;
+}
+.sauh-k {
+  font-size: 13px;
+  color: var(--accent);
+  letter-spacing: .04em;
+  margin: 0 0 4px;
+}
+.sauh-k small {
+  color: var(--t4);
+  margin-left: 4px;
+  font-size: 12px;
 }
 .abks {
   display: grid;
