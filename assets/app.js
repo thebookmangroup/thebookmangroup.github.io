@@ -1008,17 +1008,23 @@ function wireAuthors() {
   const q = $("#au-q");
   if (!q) return;
   const list = $("#au-list");
-  if (list && !matchMedia("(prefers-reduced-motion: reduce)").matches && "IntersectionObserver" in window) {
+  if (list && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
     list.classList.add("rv");
-    const cols = () => getComputedStyle(list).gridTemplateColumns.split(" ").length;
-    const io2 = new IntersectionObserver((es) => es.forEach((e) => {
-      if (!e.isIntersecting) return;
-      io2.unobserve(e.target);
-      const i = [...list.children].indexOf(e.target) % cols();
-      e.target.querySelector("img")?.style.setProperty("transition-delay", i * 0.09 + "s");
-      e.target.classList.add("on");
-    }), { rootMargin: "0px 0px -8% 0px" });
-    list.querySelectorAll(".apc").forEach((el) => io2.observe(el));
+    list.querySelectorAll(".apc").forEach((el) => {
+      const img = el.querySelector("img"), on = () => el.classList.add("on");
+      if (!img || img.complete && img.naturalWidth) return on();
+      img.addEventListener("load", on, { once: true });
+      img.addEventListener("error", on, { once: true });
+    });
+    if ("IntersectionObserver" in window) {
+      const io2 = new IntersectionObserver((es) => es.forEach((e) => {
+        if (!e.isIntersecting) return;
+        io2.unobserve(e.target);
+        const img = e.target.querySelector("img");
+        if (img) img.loading = "eager";
+      }), { rootMargin: "0px 0px 100% 0px" });
+      list.querySelectorAll(".apc").forEach((el) => io2.observe(el));
+    }
   }
   const go = $("#au-go");
   if (go) go.onclick = () => $("#au-talk").scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
