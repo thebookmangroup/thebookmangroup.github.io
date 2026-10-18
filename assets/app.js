@@ -1267,6 +1267,29 @@ function submitPage() {
     ]
   );
 }
+function privacyPage() {
+  const en = LANG === "en", M = MAIL.main;
+  return docPage(
+    "",
+    en ? "Privacy policy" : "개인정보 처리방침",
+    en ? "THE BOOK MAN CO., LTD handles as little personal information as possible on this website. Effective 19 October 2026." : "(주)더북맨은 홈페이지를 이용하는 분의 개인정보를 꼭 필요한 만큼만 다룹니다. 시행일 2026년 10월 19일.",
+    en ? [
+      { h: "What we collect", body: "<p>There are no accounts, forms or cookies on this website. To understand how the site is used, we record for each visit: IP address, browser information (user agent), the page viewed, the page you came from, screen width, language, time spent and how far you scrolled, and the type of link you clicked (e.g. bookstore, email).</p>" },
+      { h: "Why", body: "<p>Only to count visits and improve this website. We do not use it for advertising and do not build profiles.</p>" },
+      { h: "How long", body: "<p>Records containing IP addresses and browser information are deleted automatically within two days. After that we keep only totals that cannot identify anyone. The value used to count unique visitors is used for a single day and then discarded.</p>" },
+      { h: "Sharing", body: "<p>We do not share or sell this information. The site files are served by GitHub Pages (GitHub, Inc., USA), which may log visits for security under its own privacy statement. Country and city are looked up on our own server; nothing is sent to other services.</p>" },
+      { h: "Emails", body: `<p>If you email us, we use your name, contact details and message only to reply and to handle your request (manuscripts, rights, author events), and delete them when no longer needed unless the law requires us to keep them.</p>` },
+      { h: "Your rights · contact", body: `<p>You may ask to see, correct or delete your information, or ask us to stop processing it. Privacy officer: Seunghwan Jeon, CEO · <a class="link" href="mailto:${M}">${M}</a></p>` }
+    ] : [
+      { h: "모으는 정보", body: "<p>홈페이지에는 회원 가입, 입력 칸, 쿠키가 없습니다. 홈페이지가 어떻게 쓰이는지 알기 위해 방문할 때마다 다음을 기록합니다: 접속 IP 주소, 브라우저 정보, 본 화면 주소, 들어온 경로(바로 전 사이트 주소), 화면 너비, 언어 설정, 머문 시간과 화면을 내린 정도, 누른 링크의 종류(서점, 메일 등).</p>" },
+      { h: "쓰는 곳", body: "<p>방문 수를 세고 홈페이지를 고치는 데에만 씁니다. 광고에 쓰거나 개인별 기록을 만들지 않습니다.</p>" },
+      { h: "보관 기간과 파기", body: "<p>IP 주소와 브라우저 정보가 든 원본 기록은 모은 날부터 이틀 안에 자동으로 지웁니다. 그 뒤에는 누구인지 알 수 없는 합계 숫자만 남깁니다. 같은 날 같은 방문자인지 세는 데 쓰는 값은 하루만 쓰고 지웁니다.</p>" },
+      { h: "다른 곳에 주는지", body: "<p>다른 곳에 주거나 팔지 않습니다. 홈페이지 파일은 GitHub Pages(GitHub, Inc., 미국)가 전해 주며, GitHub은 보안을 위해 자체 방침에 따라 접속 기록을 남길 수 있습니다. 나라·도시 확인은 우리 서버 안에서 하며 다른 서비스로 보내지 않습니다.</p>" },
+      { h: "메일 문의", body: "<p>메일로 보내 주신 이름, 연락처, 내용은 답장과 해당 업무(원고 검토, 판권, 작가 만남 연결)에만 쓰고, 업무가 끝나면 법령으로 보관해야 하는 경우가 아니면 지체 없이 지웁니다.</p>" },
+      { h: "권리와 문의", body: `<p>내 정보를 보거나 고치거나 지우도록, 또는 처리를 멈추도록 요청하실 수 있습니다. 개인정보 보호책임자: 대표 전승환 · <a class="link" href="mailto:${M}">${M}</a></p>` }
+    ]
+  );
+}
 function permissionsPage() {
   const en = LANG === "en";
   const mail = `mailto:${MAIL.main}?subject=${encodeURIComponent("[2차 저작권 문의] 책 제목: ")}&body=${encodeURIComponent("책 제목:\n쓰려는 부분(쪽수):\n용도(낭독 영상·강의 자료·인용 등):\n올리는 곳(유튜브·인스타그램·책 등):\n기간:\n유료/무료:\n신청인·연락처:\n")}`;
@@ -1337,7 +1360,7 @@ function footer() {
       <div><h4>${t("series")}</h4><ul>${SERIES.slice(0, 6).map((s) => `<li><a href="#/series/${s.key}">${esc(LANG === "en" ? s.en : s.name)}</a></li>`).join("")}</ul></div>
       <div><h4>THE BOOKMAN</h4><ul><li><a href="#/about">${t("about")}</a></li><li><a href="#/authors">${t("authors")}</a></li><li><a href="#/world">${LANG === "en" ? "Foreign Rights" : "해외 판권"}</a></li></ul></div>
       <div><h4>${LANG === "en" ? "Imprints" : "브랜드"}</h4><ul>${IMPRINTS.map((im) => `<li><a href="#/imprint/${IMPRINT_SLUG[im.name]}">${esc(brandName(im.name))}</a></li>`).join("")}</ul></div>
-      <div><h4>Instagram</h4><ul>${SNS.map((x) => `<li><a href="${x.url}" target="_blank" rel="noopener">${LANG === "en" && x.handle === "thebookman_" ? "The Book Man" : brandName(x.name)}<span style="display:block;font-size:11px;color:#8e8c84">@${x.handle}</span></a></li>`).join("")}</ul></div><div><h4>${LANG === "en" ? "Help" : "안내"}</h4><ul><li><a href="#/press">${LANG === "en" ? "Press" : "보도 자료"}</a></li><li><a href="#/for-authors">${LANG === "en" ? "For writers" : "작가님께"}</a></li><li><a href="#/submit">${LANG === "en" ? "Manuscripts" : "원고 투고"}</a></li><li><a href="#/permissions">${LANG === "en" ? "Permissions" : "2차 저작권 이용"}</a></li><li><a href="#/careers">${LANG === "en" ? "Careers" : "채용"}</a></li><li><a href="${BOOKLIST}" download>${t("listDl")}</a></li><li><a href="#/contact">${t("contact")}</a></li></ul></div>
+      <div><h4>Instagram</h4><ul>${SNS.map((x) => `<li><a href="${x.url}" target="_blank" rel="noopener">${LANG === "en" && x.handle === "thebookman_" ? "The Book Man" : brandName(x.name)}<span style="display:block;font-size:11px;color:#8e8c84">@${x.handle}</span></a></li>`).join("")}</ul></div><div><h4>${LANG === "en" ? "Help" : "안내"}</h4><ul><li><a href="#/press">${LANG === "en" ? "Press" : "보도자료"}</a></li><li><a href="#/for-authors">${LANG === "en" ? "For writers" : "작가님께"}</a></li><li><a href="#/submit">${LANG === "en" ? "Manuscripts" : "원고 투고"}</a></li><li><a href="#/permissions">${LANG === "en" ? "Permissions" : "2차 저작권 이용"}</a></li><li><a href="#/careers">${LANG === "en" ? "Careers" : "채용"}</a></li><li><a href="${BOOKLIST}" download>${t("listDl")}</a></li><li><a href="#/contact">${t("contact")}</a></li><li><a href="#/privacy">${LANG === "en" ? "Privacy" : "개인정보 처리방침"}</a></li></ul></div>
     </div>
     <div class="ft-grp"><span>${LANG === "en" ? "The Book Man Group" : "책 읽어주는 남자 그룹"}</span><a href="https://www.instagram.com/thebookman_/" target="_blank" rel="noopener">${LANG === "en" ? "The Book Man" : "책 읽어주는 남자"}</a><a href="#/about">${LANG === "en" ? "Publishing" : "출판 그룹"}</a><a href="https://illusien.co.kr/" target="_blank" rel="noopener">${LANG === "en" ? "ILLUSIEN" : "일루지앵"}</a></div>
     <div class="ft-b">${LANG === "en" ? `THE BOOK MAN CO., LTD · <span class="nw">Seoul, Korea</span><br><span class="nw">THE BOOK MAN GROUP PTY LTD</span> <span class="nw">(ACN 699 259 802)</span><br class="m"><span class="ft-sep"> · </span><span class="nw">International rights · Melbourne, Australia</span><br>${MAIL.main} · ${MAIL.rights}` : `(주)더북맨 · THE BOOK MAN CO., LTD · 서울<br class="m"><span class="ft-sep"> · </span>${MAIL.main} · ${MAIL.rights}`}<br>© THE BOOK MAN CO., LTD · TBMG</div>`;
@@ -1392,7 +1415,7 @@ function route() {
   const parts = path.split("/").filter(Boolean).map(decodeURIComponent);
   let k = parts[0] || "";
   document.documentElement.lang = LANG;
-  $("#nav").innerHTML = NAV.map((n) => `<a href="#/${n}" class="${k === n || k === "book" && n === "books" || k === "author" && n === "authors" || (k === "submit" || k === "permissions" || k === "careers" || k === "for-authors" || k === "press") && n === "contact" || k === "imprint" && n === "about" ? "on" : ""}">${t(n)}</a>`).join("");
+  $("#nav").innerHTML = NAV.map((n) => `<a href="#/${n}" class="${k === n || k === "book" && n === "books" || k === "author" && n === "authors" || (k === "submit" || k === "permissions" || k === "careers" || k === "for-authors" || k === "press" || k === "privacy") && n === "contact" || k === "imprint" && n === "about" ? "on" : ""}">${t(n)}</a>`).join("");
   document.querySelectorAll(".lang button").forEach((b) => b.classList.toggle("on", b.dataset.l === LANG));
   const pages = {
     "": home,
@@ -1409,7 +1432,8 @@ function route() {
     "for-authors": forAuthorsPage,
     submit: submitPage,
     permissions: permissionsPage,
-    careers: careersPage
+    careers: careersPage,
+    privacy: privacyPage
   };
   if (!Object.hasOwn(pages, k)) k = "\0";
   $("#app").innerHTML = (pages[k] || notFound)();
