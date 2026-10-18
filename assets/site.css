@@ -394,6 +394,7 @@ header {
   animation-duration: 68s;
 }
 .col:nth-child(4) {
+  display: none;
   animation-duration: 82s;
   animation-direction: reverse;
   margin-top: -60px;

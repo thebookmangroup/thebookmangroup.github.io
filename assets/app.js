@@ -344,7 +344,7 @@ function home() {
       <p class="lead">${t("heroP")}</p>
       <div class="cta">${LANG === "en" ? `<a class="btn ink" href="#/world">${t("heroB1")}</a><a class="btn" href="#/books">${t("heroB2")}</a>` : `<a class="btn ink" href="#/books">${t("heroB1")}</a><a class="btn" href="#/about">${t("heroB2")}</a>`}</div>
     </div>
-    <div class="shelf" aria-hidden="true">${cols.slice(0, innerWidth < 900 ? 4 : 3).map(colHtml).join("")}</div>
+    <div class="shelf" aria-hidden="true">${cols.map(colHtml).join("")}</div>
   </div></section>
   <div class="wrap"><div class="figures f5">
     <div class="fig"><b>2012</b><span>${t("f1")}</span></div>
