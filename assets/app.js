@@ -1120,19 +1120,7 @@ function about() {
       <div><div class="letter">${LANG === "en" ? en : ko}</div>
         <div class="sign"><img src="logo/tbmg-ink.svg" alt="TBMG" style="height:26px;margin-bottom:12px"><b>TBMG (The Book Man Group)</b>${LANG === "en" ? "" : "<br>책 읽어주는 남자 그룹"}</div></div>
     </div></div>
-    <div class="wrap"><section class="flow">
-      <div class="kicker">${LANG === "en" ? "How we work" : "우리가 일하는 방식"}</div>
-      <h2>${LANG === "en" ? "We make it,<br>and we share it ourselves." : "직접 만들고,<br>직접 알립니다."}</h2>
-      <div class="fl-row"><span class="fl-i">01</span><div class="fl-t"><b>${LANG === "en" ? "We make it" : "직접 만듭니다"}</b><p>${LANG === "en" ? `Words and video, books, and the objects of everyday life.<br class="pc"> We plan and make every one of them ourselves, together with our authors and partners.` : `글과 영상, 책, 그리고 일상의 물건까지.<br class="pc"> 작가·파트너와 함께 기획부터 완성까지 직접 만듭니다.`}</p></div><div class="fl-n"><span data-count="${IMPRINTS.length + 2}">${IMPRINTS.length + 2}</span><small>${LANG === "en" ? "brands" : "개 브랜드"}</small></div></div>
-      <div class="fl-row"><span class="fl-i">02</span><div class="fl-t"><b>${LANG === "en" ? "We share it" : "직접 알립니다"}</b><p>${LANG === "en" ? 'No one knows what we make better than the people who made it.<br class="pc"> <i>The Book Man</i> shares it first with the readers who have followed us since 2012,<br class="pc"> so everything we make meets its audience from day one.' : '만든 것을 가장 잘 아는 건 만든 사람입니다.<br class="pc"> 새로운 것이 나오면, 2012년부터 함께해 온 독자들에게 <span class="nw">책 읽어주는 남자</span>가 먼저 전합니다.<br class="pc"> 그래서 우리가 만든 것은 나오는 날부터 사람들을 만납니다.'}</p></div><div class="fl-n"><span data-count="${LANG === "en" ? 1.5 : 150}" data-dec="${LANG === "en" ? 1 : 0}" data-suffix="${LANG === "en" ? "M+" : "만+"}">${LANG === "en" ? "1.5M+" : "150만+"}</span><small>${LANG === "en" ? "followers across Instagram, YouTube,<br>Kakao and Naver · as of October 2026" : "인스타그램·유튜브·카카오·네이버 구독자 합계<br>2026년 10월 기준"}</small></div></div>
-      <div class="fl-row"><span class="fl-i">03</span><div class="fl-t"><b>${LANG === "en" ? "We take it further" : "세계로 넓힙니다"}</b><p>${LANG === "en" ? "Stories loved in Korea travel on — translated and shared with readers around the world." : "한국에서 사랑받은 이야기는 번역되어 다른 나라 사람들에게로 이어집니다."}</p></div><div class="fl-n"><span data-count="${WORLD_C.length}">${WORLD_C.length}</span><small>${LANG === "en" ? "countries" : "개 나라에 판권 수출"}</small></div></div>
-    </section></div>
-    <div class="wrap"><section class="people">
-      <div><div class="kicker">${LANG === "en" ? "Our people" : "함께 일하는 사람"}</div>
-        <h2>${LANG === "en" ? 'It all comes down<br class="pc"> to people.' : '사람이 하는<br class="pc"> 일입니다.'}</h2></div>
-      <div class="pp-t">${peopleText()}</div>
-    </section></div>
-    ${cultureSec()}
+    <!-- 순서 (대표 10-18): 편지 → 그룹 → 출판 브랜드 → 일하는 방식 → 사람 → 문화 → 문의 — 큰 것(무엇을 하는 회사)에서 작은 것(어떻게·누가)으로 -->
     <section class="sec"><div class="wrap">
       <div class="vision"><div class="kicker">${LANG === "en" ? "The Book Man Group" : "책 읽어주는 남자 그룹"}</div>
         <ul>${(LANG === "en" ? ["We propose a happier life.", "We grow together.", "We do well, together."] : ["행복한 삶을 제안합니다.", "모두 성장하고 발전합니다.", "함께 잘 삽니다."]).map((v) => `<li>${v}</li>`).join("")}</ul></div>
@@ -1152,6 +1140,19 @@ function about() {
           <div class="imc-fan">${fan.map((b, j) => coverHtml(b).replace('<div class="cover">', `<div class="cover" style="--k:${j - mid};--a:${Math.abs(j - mid)}">`)).join("")}</div></a>`;
   }).join("")}</div>
     </div></section>
+    <div class="wrap"><section class="flow">
+      <div class="kicker">${LANG === "en" ? "How we work" : "우리가 일하는 방식"}</div>
+      <h2>${LANG === "en" ? "We make it,<br>and we share it ourselves." : "직접 만들고,<br>직접 알립니다."}</h2>
+      <div class="fl-row"><span class="fl-i">01</span><div class="fl-t"><b>${LANG === "en" ? "We make it" : "직접 만듭니다"}</b><p>${LANG === "en" ? `Words and video, books, and the objects of everyday life.<br class="pc"> We plan and make every one of them ourselves, together with our authors and partners.` : `글과 영상, 책, 그리고 일상의 물건까지.<br class="pc"> 작가·파트너와 함께 기획부터 완성까지 직접 만듭니다.`}</p></div><div class="fl-n"><span data-count="${IMPRINTS.length + 2}">${IMPRINTS.length + 2}</span><small>${LANG === "en" ? "brands" : "개 브랜드"}</small></div></div>
+      <div class="fl-row"><span class="fl-i">02</span><div class="fl-t"><b>${LANG === "en" ? "We share it" : "직접 알립니다"}</b><p>${LANG === "en" ? 'No one knows what we make better than the people who made it.<br class="pc"> <i>The Book Man</i> shares it first with the readers who have followed us since 2012,<br class="pc"> so everything we make meets its audience from day one.' : '만든 것을 가장 잘 아는 건 만든 사람입니다.<br class="pc"> 새로운 것이 나오면, 2012년부터 함께해 온 독자들에게 <span class="nw">책 읽어주는 남자</span>가 먼저 전합니다.<br class="pc"> 그래서 우리가 만든 것은 나오는 날부터 사람들을 만납니다.'}</p></div><div class="fl-n"><span data-count="${LANG === "en" ? 1.5 : 150}" data-dec="${LANG === "en" ? 1 : 0}" data-suffix="${LANG === "en" ? "M+" : "만+"}">${LANG === "en" ? "1.5M+" : "150만+"}</span><small>${LANG === "en" ? "followers across Instagram, YouTube,<br>Kakao and Naver · as of October 2026" : "인스타그램·유튜브·카카오·네이버 구독자 합계<br>2026년 10월 기준"}</small></div></div>
+      <div class="fl-row"><span class="fl-i">03</span><div class="fl-t"><b>${LANG === "en" ? "We take it further" : "세계로 넓힙니다"}</b><p>${LANG === "en" ? "Stories loved in Korea travel on — translated and shared with readers around the world." : "한국에서 사랑받은 이야기는 번역되어 다른 나라 사람들에게로 이어집니다."}</p></div><div class="fl-n"><span data-count="${WORLD_C.length}">${WORLD_C.length}</span><small>${LANG === "en" ? "countries" : "개 나라에 판권 수출"}</small></div></div>
+    </section></div>
+    <div class="wrap"><section class="people">
+      <div><div class="kicker">${LANG === "en" ? "Our people" : "함께 일하는 사람"}</div>
+        <h2>${LANG === "en" ? 'It all comes down<br class="pc"> to people.' : '사람이 하는<br class="pc"> 일입니다.'}</h2></div>
+      <div class="pp-t">${peopleText()}</div>
+    </section></div>
+    ${cultureSec()}
     <section class="sec"><div class="wrap">${contactCards()}</div></section>`;
 }
 function contactCards() {
