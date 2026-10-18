@@ -2748,6 +2748,14 @@ footer {
     width: 120px;
   }
 }
+@media (max-width: 640px) {
+  .q-grid {
+    gap: 22px;
+  }
+  .q-book .cover {
+    width: 68px;
+  }
+}
 .doc {
   display: grid;
   grid-template-columns: 220px minmax(0, 1fr);
@@ -3391,6 +3399,14 @@ section.people {
 .rv-p.rv-on {
   opacity: 1;
   transform: none;
+}
+.cards3.two {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+@media (max-width: 860px) {
+  .cards3.two {
+    grid-template-columns: 1fr;
+  }
 }
 .imx {
   display: grid;

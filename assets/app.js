@@ -1092,9 +1092,10 @@ function worldPage(params) {
     </div></div>
     ${LANG === "en" ? rightsHighlights() : ""}
     ${worldSection(true)}
-    <div class="wrap" style="padding-top:96px"><div class="cards3" style="margin-bottom:96px;grid-template-columns:repeat(2,minmax(0,1fr))">
+    <div class="wrap" style="padding-top:96px"><div class="cards3${LANG === "en" ? "" : " two"}" style="margin-bottom:96px">
       <div class="c3"><h3>${LANG === "en" ? "Sales history" : "판매 기록"}</h3><p>${LANG === "en" ? "Print runs and sales history, shared with interested publishers." : "관심 있는 출판사에 쇄 이력과 판매 기록을 공유합니다."}</p></div>
       <div class="c3"><h3>${LANG === "en" ? "Direct replies" : "직접 답장"}</h3><p>${LANG === "en" ? "Our rights manager will reply to you personally." : "담당자가 직접 답장드립니다."}</p></div>
+      ${LANG === "en" ? `<div class="c3"><h3>Contracting</h3><p>Translation licences are signed with <span class="nw">THE BOOK MAN GROUP PTY LTD</span>, our international rights subsidiary in <span class="nw">Melbourne, Australia</span>. Your contact stays the same.</p></div>` : ""}
     </div>
     ${secHd(LANG === "en" ? "Available" : "판권 문의", LANG === "en" ? "Available for translation" : "판권 문의 가능한 책")}
     ${bookList(params, "#/world", true)}<div style="height:112px"></div></div>`;
@@ -1322,7 +1323,7 @@ function footer() {
       <div><h4>Instagram</h4><ul>${SNS.map((x) => `<li><a href="${x.url}" target="_blank" rel="noopener">${LANG === "en" && x.handle === "thebookman_" ? "The Book Man" : brandName(x.name)}<span style="display:block;font-size:11px;color:#8e8c84">@${x.handle}</span></a></li>`).join("")}</ul></div><div><h4>${LANG === "en" ? "Help" : "안내"}</h4><ul><li><a href="#/press">${LANG === "en" ? "Press" : "보도 자료"}</a></li><li><a href="#/for-authors">${LANG === "en" ? "For writers" : "작가님께"}</a></li><li><a href="#/submit">${LANG === "en" ? "Manuscripts" : "원고 투고"}</a></li><li><a href="#/permissions">${LANG === "en" ? "Permissions" : "2차 저작권 이용"}</a></li><li><a href="#/careers">${LANG === "en" ? "Careers" : "채용"}</a></li><li><a href="${BOOKLIST}" download>${t("listDl")}</a></li><li><a href="#/contact">${t("contact")}</a></li></ul></div>
     </div>
     <div class="ft-grp"><span>${LANG === "en" ? "The Book Man Group" : "책 읽어주는 남자 그룹"}</span><a href="https://www.instagram.com/thebookman_/" target="_blank" rel="noopener">${LANG === "en" ? "The Book Man" : "책 읽어주는 남자"}</a><a href="#/about">${LANG === "en" ? "Publishing" : "출판 그룹"}</a><a href="https://illusien.co.kr/" target="_blank" rel="noopener">${LANG === "en" ? "ILLUSIEN" : "일루지앵"}</a></div>
-    <div class="ft-b">${LANG === "en" ? "THE BOOK MAN CO., LTD · Seoul, Korea" : "(주)더북맨 · THE BOOK MAN CO., LTD · 서울"}<br class="m"><span class="ft-sep"> · </span>${MAIL.main} · ${MAIL.rights}<br>© THE BOOK MAN CO., LTD · TBMG</div>`;
+    <div class="ft-b">${LANG === "en" ? `THE BOOK MAN CO., LTD · <span class="nw">Seoul, Korea</span><br><span class="nw">THE BOOK MAN GROUP PTY LTD</span><br class="m"><span class="ft-sep"> · </span><span class="nw">International rights · Melbourne, Australia</span><br>${MAIL.main} · ${MAIL.rights}` : `(주)더북맨 · THE BOOK MAN CO., LTD · 서울<br class="m"><span class="ft-sep"> · </span>${MAIL.main} · ${MAIL.rights}`}<br>© THE BOOK MAN CO., LTD · TBMG</div>`;
 }
 function openSearch() {
   $("#search").classList.add("open");
