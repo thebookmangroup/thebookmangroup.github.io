@@ -925,6 +925,7 @@ const authorsPage = () => {
       <div class="tb-c"><span>${en ? "Corporate & institutions" : "기업 · 기관 강연"}</span><span>${en ? "Libraries & schools" : "도서관 · 학교 북토크"}</span><span>${en ? "Broadcast & interviews" : "방송 · 인터뷰"}</span></div>
       <a class="btn tb-btn" href="${talkMail()}">${en ? "Send a request" : "만남 요청 보내기"} →</a></div></section>
     ${foreignHtml()}
+    <div class="wrap" id="au-invite"><a class="au-inv" href="#/for-authors"><span>${en ? "We’re looking for the authors of our next stories." : "다음 이야기를 함께 만들 작가님을 기다립니다."}</span><b>${en ? "For writers" : "작가님께"} →</b></a></div>
     <div class="wrap"><div class="empty" id="au-none" style="display:none;padding:56px 0 112px">${en ? "No matching authors." : "찾는 작가가 없습니다."}</div><div style="height:96px"></div></div>`;
 };
 const FOREIGN_EN = {
@@ -1048,6 +1049,8 @@ function wireAuthors() {
     if (w) w.style.display = w.querySelector('.fw-blk:not([style*="none"])') ? "" : "none";
     $("#au-n").textContent = v ? LANG === "en" ? n + " found" : n + "명" : "";
     $("#au-none").style.display = v && !n ? "" : "none";
+    const iv = $("#au-invite");
+    if (iv) iv.style.display = v ? "none" : "";
   };
 }
 function lectureMail(a) {
@@ -1226,6 +1229,7 @@ function imprintPage(slug) {
 function forAuthorsPage() {
   const en = LANG === "en";
   const nC = WORLD_C.length;
+  const cases = WORLD_BOOKS.filter((w) => byIsbn[w.isbn] && byIsbn[w.isbn].original).sort((a, b) => b.countries.length - a.countries.length).slice(0, 2);
   const items = en ? [
     ["One editor, start to finish", "An editor stays with your book from the first draft to the last printing — title, cover, copy and every reprint."],
     ["Readers before the book", "The Book Man has shared good passages since 2012. Our brand channels introduce your book to readers who already love reading."],
@@ -1240,6 +1244,11 @@ function forAuthorsPage() {
   return `<div class="wrap"><div class="ph-hd"><div class="crumb"><a href="#/contact">${en ? "Contact" : "문의"}</a></div>
       <h1 style="margin-top:14px">${en ? "For writers" : "작가님께"}</h1>
       <p>${en ? "What we do with our authors." : "책 읽어주는 남자가 작가님과 함께하는 일을 소개합니다."}</p></div>
+    <div class="fa-figs"><div><b data-count="${authorsRanked.length}">${authorsRanked.length}</b><span>${en ? "authors with us" : "함께하는 작가"}</span></div><div><b data-count="${BOOKS.length}">${BOOKS.length}</b><span>${en ? "books published" : "펴낸 책"}</span></div><div><b data-count="${nC}">${nC}</b><span>${en ? "countries licensed" : "판권 나라"}</span></div></div>
+    ${cases.length ? `<div class="fa-case"><div class="lab">${en ? "Where our authors’ books have gone" : "작가님의 책이 간 곳"}</div>${cases.map((w) => {
+    const b = byIsbn[w.isbn];
+    return `<a href="#/book/${b.isbn}"><b>${en ? esc((b.en && b.en.en_title || title(b)).replace(/\s*\([^)]*\)\s*$/, "")) : "『" + esc(title(b).replace(/\s*\([^)]*\)\s*$/, "")) + "』"}</b><span>${esc(authorLine(b))} · ${en ? `licensed in ${w.countries.length} countries` : `${w.countries.length}개 나라에 판권`}</span></a>`;
+  }).join("")}</div>` : ""}
     <div class="hub" style="padding:56px 0 40px">${items.map(([h, p]) => `<div style="padding:28px 0;border-top:1px solid var(--ink)"><b style="font-size:20px;font-weight:400;letter-spacing:-.02em">${esc(h)}</b><p style="font-size:14px;color:var(--t3);margin-top:8px;line-height:1.8">${esc(p)}</p></div>`).join("")}</div>
     <div style="padding:0 0 120px;display:flex;gap:10px;flex-wrap:wrap"><a class="btn ink" href="#/submit">${en ? "Manuscript guide" : "원고 투고 안내"}</a><a class="btn" href="#/authors">${en ? "Our authors" : "우리의 작가"}</a></div></div>`;
 }
@@ -1408,7 +1417,7 @@ function route() {
   $("#ft").innerHTML = footer();
   $("#hdr").classList.remove("open");
   clearInterval(window.__auRoll);
-  if (k === "" || k === "world" || k === "about") countUp();
+  if (k === "" || k === "world" || k === "about" || k === "for-authors") countUp();
   if (k === "") revealLines();
   if (k === "about") aboutReveal();
   sentenceBreaks();

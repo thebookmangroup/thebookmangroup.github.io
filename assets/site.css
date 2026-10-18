@@ -3400,6 +3400,94 @@ section.people {
   opacity: 1;
   transform: none;
 }
+.au-inv {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding: 28px 0;
+  border-top: 1px solid var(--ink);
+  color: inherit;
+  font-size: 20px;
+  font-weight: 300;
+  letter-spacing: -.02em;
+}
+.au-inv b {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.au-inv:hover b {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.fa-figs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-bottom: 1px solid var(--rule);
+  margin-top: 8px;
+}
+.fa-figs > div {
+  padding: 26px 0 22px;
+}
+.fa-figs > div + div {
+  padding-left: 28px;
+  border-left: 1px solid var(--rule);
+}
+.fa-figs b {
+  display: block;
+  font-size: 44px;
+  font-weight: 300;
+  letter-spacing: -.03em;
+  line-height: 1;
+}
+.fa-figs span {
+  display: block;
+  font-size: 13px;
+  color: var(--t3);
+  margin-top: 10px;
+}
+.fa-case {
+  padding: 28px 0 0;
+}
+.fa-case .lab {
+  font-size: 12px;
+  color: var(--t4);
+  margin-bottom: 6px;
+}
+.fa-case a {
+  display: flex;
+  gap: 14px;
+  align-items: baseline;
+  flex-wrap: wrap;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--rule);
+  color: inherit;
+}
+.fa-case a b {
+  font-weight: 500;
+  font-size: 16px;
+}
+.fa-case a span {
+  font-size: 13px;
+  color: var(--t3);
+}
+@media (max-width: 600px) {
+  .au-inv {
+    font-size: 17px;
+  }
+  .fa-figs b {
+    font-size: 32px;
+  }
+  .fa-figs > div + div {
+    padding-left: 14px;
+  }
+  .fa-figs span {
+    font-size: 12px;
+  }
+}
 .cards3.two {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
