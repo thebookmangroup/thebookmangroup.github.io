@@ -4327,6 +4327,11 @@ html.grain body::after {
   width: 380px;
   flex: none;
 }
+.au-sort {
+  font-size: 13px;
+  color: var(--t4);
+  margin-top: 10px;
+}
 .au-hd {
   padding-top: 88px;
 }
@@ -4585,8 +4590,11 @@ html.grain body::after {
   letter-spacing: .12em;
   font-variant-numeric: tabular-nums;
 }
-.apc-k::before {
-  content: "NO. " counter(au, decimal-leading-zero);
+.apc-k {
+  display: none;
+}
+.apc .apc-n {
+  margin-top: 0;
 }
 .apc-k::after {
   content: "";
