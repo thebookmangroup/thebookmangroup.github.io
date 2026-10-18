@@ -2635,7 +2635,7 @@ footer {
   transform: translateY(-6px) rotate(3deg);
 }
 @media (hover: none) {
-  .ix .go {
+  .ix:not(.hov) .go {
     display: none;
   }
 }
@@ -2673,9 +2673,27 @@ footer {
   color: var(--accent);
 }
 @media (hover: none) {
-  .card .cover::after {
+  .card:not(.hov) .cover::after {
     display: none;
   }
+}
+.ft-view {
+  display: block;
+  width: 100%;
+  margin-top: 28px;
+  padding: 14px 0;
+  border: 1px solid #48484a;
+  border-radius: 4px;
+  background: transparent;
+  color: #d1d1d6;
+  font: inherit;
+  font-size: 14px;
+  letter-spacing: .02em;
+  cursor: pointer;
+}
+.ft-view:active {
+  background: #2c2c2e;
+  color: #fff;
 }
 .q-text.q-long {
   font-size: 23px;

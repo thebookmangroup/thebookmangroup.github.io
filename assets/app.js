@@ -593,6 +593,105 @@ function tiltCover() {
     c.style.transform = "";
   });
 }
+const HOV_SEL = ".card,.ix,.au,.sr,a.pv,.im,.imc,.bk-cover,.aut,.auh-b,.abk,.apc,.fwc,.fwm,.arw,.hl-i,.gp,.reach-line,.au-inv,.sx";
+function touchEffects() {
+  if (matchMedia("(hover: hover)").matches || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const out = [];
+  const copy = (rules, wrap) => {
+    for (const r of rules) {
+      if (r.cssRules && r.media) {
+        const m = r.media.mediaText;
+        if (!/hover|reduced-motion/.test(m)) copy(r.cssRules, m);
+      } else if (r.selectorText && r.selectorText.includes(":hover")) {
+        const s = r.selectorText.replace(/:hover/g, ".hov"), b = r.style.cssText;
+        out.push(wrap ? `@media ${wrap}{${s}{${b}}}` : `${s}{${b}}`);
+      }
+    }
+  };
+  for (const sh of document.styleSheets) {
+    try {
+      copy(sh.cssRules);
+    } catch (e) {
+    }
+  }
+  const st = document.createElement("style");
+  st.textContent = out.join("\n");
+  document.head.append(st);
+  let cur = null, items = [], ticking = false;
+  const set = (el) => {
+    if (el === cur) return;
+    if (cur) cur.classList.remove("hov");
+    cur = el;
+    if (el) el.classList.add("hov");
+  };
+  const scan = () => {
+    items = [...document.querySelectorAll(HOV_SEL)];
+  };
+  const pick = () => {
+    ticking = false;
+    const cx = innerWidth / 2, cy = innerHeight / 2;
+    let best = null, bd = 1e9;
+    for (const el of items) {
+      const r = el.getBoundingClientRect();
+      if (r.bottom < innerHeight * 0.25 || r.top > innerHeight * 0.75 || r.right < 0 || r.left > innerWidth || !r.width) continue;
+      const d = Math.abs(r.top + r.height / 2 - cy) + Math.abs(r.left + r.width / 2 - cx) * 0.6;
+      if (d < bd - 4) {
+        bd = d;
+        best = el;
+      }
+    }
+    set(best);
+  };
+  const ask = () => {
+    if (!ticking) {
+      ticking = true;
+      requestAnimationFrame(pick);
+    }
+  };
+  addEventListener("scroll", ask, { passive: true });
+  document.addEventListener("scroll", ask, { passive: true, capture: true });
+  document.addEventListener("touchstart", (e) => {
+    const el = e.target.closest && e.target.closest(HOV_SEL);
+    if (el) set(el);
+  }, { passive: true });
+  let mt;
+  new MutationObserver(() => {
+    clearTimeout(mt);
+    mt = setTimeout(() => {
+      scan();
+      cur = null;
+      ask();
+    }, 120);
+  }).observe($("#app"), { childList: true, subtree: true });
+  scan();
+  ask();
+}
+function tiltTouch() {
+  const box = document.querySelector(".bk-cover"), c = box && box.querySelector(".bk3d");
+  if (!c || matchMedia("(hover: hover)").matches || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const tilt = (x, y) => {
+    c.style.transform = `rotateY(${(x * 14).toFixed(2)}deg) rotateX(${(-y * 10).toFixed(2)}deg)`;
+    c.style.setProperty("--gx", `${((x + 0.5) * 100).toFixed(0)}%`);
+    c.style.setProperty("--gy", `${((y + 0.5) * 100).toFixed(0)}%`);
+  };
+  box.addEventListener("touchmove", (e) => {
+    const t2 = e.touches[0], r = c.getBoundingClientRect();
+    tilt(Math.max(-0.5, Math.min(0.5, (t2.clientX - r.left) / r.width - 0.5)), Math.max(-0.5, Math.min(0.5, (t2.clientY - r.top) / r.height - 0.5)));
+  }, { passive: true });
+  box.addEventListener("touchend", () => {
+    c.style.transform = "";
+  });
+  setTimeout(() => {
+    if (!document.body.contains(c)) return;
+    tilt(0.35, -0.1);
+    setTimeout(() => {
+      tilt(-0.25, 0.05);
+      setTimeout(() => {
+        c.style.transform = "";
+      }, 600);
+    }, 600);
+  }, 500);
+}
 const VT = !!document.startViewTransition && !matchMedia("(prefers-reduced-motion: reduce)").matches;
 let vtFrom = null;
 const vtClear = () => document.querySelectorAll('[style*="view-transition-name"]').forEach((el) => {
@@ -1626,7 +1725,28 @@ function footer() {
       <div><h4>Instagram</h4><ul>${SNS.map((x) => `<li><a href="${x.url}" target="_blank" rel="noopener">${LANG === "en" && x.handle === "thebookman_" ? "The Book Man" : brandName(x.name)}<span style="display:block;font-size:11px;color:#8e8c84">@${x.handle}</span></a></li>`).join("")}</ul></div><div><h4>${LANG === "en" ? "Help" : "안내"}</h4><ul><li><a href="#/press">${LANG === "en" ? "Press" : "보도자료"}</a></li><li><a href="#/for-authors">${LANG === "en" ? "For writers" : "작가님께"}</a></li><li><a href="#/submit">${LANG === "en" ? "Manuscripts" : "원고 투고"}</a></li><li><a href="#/permissions">${LANG === "en" ? "Permissions" : "2차 저작권 이용"}</a></li><li><a href="#/careers">${LANG === "en" ? "Careers" : "채용"}</a></li><li><a href="${BOOKLIST}" download>${t("listDl")}</a></li><li><a href="#/contact">${t("contact")}</a></li><li><a href="#/privacy">${LANG === "en" ? "Privacy" : "개인정보 처리방침"}</a></li></ul></div>
     </div>
     <div class="ft-grp"><span>${LANG === "en" ? "The Book Man Group" : "책 읽어주는 남자 그룹"}</span><a href="https://www.instagram.com/thebookman_/" target="_blank" rel="noopener">${LANG === "en" ? "The Book Man" : "책 읽어주는 남자"}</a><a href="#/about">${LANG === "en" ? "Publishing" : "출판 그룹"}</a><a href="https://illusien.co.kr/" target="_blank" rel="noopener">${LANG === "en" ? "ILLUSIEN" : "일루지앵"}</a></div>
-    <div class="ft-b">${LANG === "en" ? `THE BOOK MAN CO., LTD · <span class="nw">Seoul, Korea</span><br><span class="nw">THE BOOK MAN GROUP PTY LTD</span> <span class="nw">(ACN 699 259 802)</span><br class="m"><span class="ft-sep"> · </span><span class="nw">International rights · Melbourne, Australia</span><br>${MAIL.main} · ${MAIL.rights}` : `(주)더북맨 · THE BOOK MAN CO., LTD · 서울<br class="m"><span class="ft-sep"> · </span>${MAIL.main} · ${MAIL.rights}`}<br>© THE BOOK MAN CO., LTD · TBMG</div>`;
+    <div class="ft-b">${LANG === "en" ? `THE BOOK MAN CO., LTD · <span class="nw">Seoul, Korea</span><br><span class="nw">THE BOOK MAN GROUP PTY LTD</span> <span class="nw">(ACN 699 259 802)</span><br class="m"><span class="ft-sep"> · </span><span class="nw">International rights · Melbourne, Australia</span><br>${MAIL.main} · ${MAIL.rights}` : `(주)더북맨 · THE BOOK MAN CO., LTD · 서울<br class="m"><span class="ft-sep"> · </span>${MAIL.main} · ${MAIL.rights}`}<br>© THE BOOK MAN CO., LTD · TBMG</div>${viewToggle()}`;
+}
+const HP_TOUCH = matchMedia("(hover: none) and (pointer: coarse)").matches && Math.min(screen.width, screen.height) < 1024;
+const hpPcView = () => {
+  try {
+    return localStorage.getItem("hp-view") === "pc";
+  } catch (e) {
+    return false;
+  }
+};
+function viewToggle() {
+  if (!HP_TOUCH) return "";
+  const pc = hpPcView();
+  return `<button class="ft-view" type="button" onclick="setView(${pc ? "false" : "true"})">${pc ? LANG === "en" ? "Mobile view" : "모바일 화면으로 보기" : LANG === "en" ? "Desktop view" : "PC 화면으로 보기"}</button>`;
+}
+function setView(pc) {
+  try {
+    pc ? localStorage.setItem("hp-view", "pc") : localStorage.removeItem("hp-view");
+  } catch (e) {
+  }
+  scrollTo(0, 0);
+  location.reload();
 }
 function openSearch() {
   $("#search").classList.add("open");
@@ -1717,6 +1837,7 @@ function route() {
   sentenceBreaks();
   if (k === "book") {
     tiltCover();
+    tiltTouch();
     if (parts[1]) vtFrom = parts[1];
   }
   if (!k) {
@@ -1825,3 +1946,4 @@ if (PATHMODE) {
   });
 }
 route();
+touchEffects();
