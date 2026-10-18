@@ -1449,6 +1449,70 @@ function route() {
     }
   }), { rootMargin: "0px 0px -10% 0px" });
   document.querySelectorAll(".fade").forEach((el) => io.observe(el));
+  hpView();
+}
+const HP_T = location.hostname === "thebookman.co.kr" ? "https://t.thebookman.co.kr/c" : null;
+let hpPage = null, hpAt = 0, hpMax = 0, hpFirst = true;
+function hpSend(o) {
+  if (!HP_T) return;
+  try {
+    fetch(HP_T + "?" + new URLSearchParams(o), { mode: "no-cors", keepalive: true, credentials: "omit", referrerPolicy: "no-referrer" }).catch(() => {
+    });
+  } catch (e) {
+  }
+}
+function hpLeave() {
+  if (hpPage) hpSend({ e: "lv", p: hpPage, s: Math.round((Date.now() - hpAt) / 1e3), d: hpMax });
+  hpPage = null;
+}
+function hpView() {
+  if (!HP_T || location.pathname === hpPage) return;
+  hpLeave();
+  hpPage = location.pathname;
+  hpAt = Date.now();
+  hpMax = 0;
+  hpSend({ e: "pv", p: hpPage, r: hpFirst ? document.referrer : "", l: LANG, w: innerWidth });
+  hpFirst = false;
+}
+if (HP_T) {
+  addEventListener("scroll", () => {
+    if (!hpPage) return;
+    const d = Math.round((scrollY + innerHeight) / document.documentElement.scrollHeight * 100);
+    if (d > hpMax) hpMax = Math.min(100, d);
+  }, { passive: true });
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "hidden") hpLeave();
+    else if (!hpPage) {
+      hpPage = location.pathname;
+      hpAt = Date.now();
+    }
+  });
+  addEventListener("pagehide", hpLeave);
+  document.addEventListener("click", (e) => {
+    const a = e.target.closest && e.target.closest("a[href]");
+    if (!a) return;
+    const h = a.getAttribute("href");
+    let k = null, x = "";
+    if (h.startsWith("mailto:")) {
+      const sub2 = decodeURIComponent((h.split("subject=")[1] || "").split("&")[0]);
+      k = /rights@|판권/i.test(h + sub2) ? "판권 문의" : /강연|Talk/i.test(sub2) ? "만남 요청" : /투고|submission/i.test(sub2) ? "원고 투고" : /제휴/.test(sub2) ? "강연·제휴" : "메일";
+      x = sub2.slice(0, 40);
+    } else if (/^https?:/.test(h) && !/thebookman\.co\.kr/.test(h)) {
+      const host = (() => {
+        try {
+          return new URL(h).hostname.replace(/^www\./, "");
+        } catch (er) {
+          return "";
+        }
+      })();
+      k = /kyobo|yes24|aladin|ridi|millie|interpark|ypbooks|naver/.test(host) ? "서점" : /instagram|youtube|threads|facebook/.test(host) ? "SNS" : "바깥 링크";
+      x = host;
+    } else if (/\.pdf$/i.test(h)) {
+      k = "보도자료 내려받기";
+      x = h.split("/").pop();
+    } else if (/\.xlsx$/i.test(h)) k = "도서 목록 내려받기";
+    if (k) hpSend({ e: "ck", p: location.pathname, k, x });
+  }, true);
 }
 document.querySelectorAll(".lang button").forEach((b) => b.addEventListener("click", () => {
   LANG = b.dataset.l;
