@@ -336,6 +336,7 @@ const authorsRanked = [...AUTHORS].map((a) => {
 }).filter((x) => x.last).sort((x, y) => !!y.a.photo - !!x.a.photo || y.last.localeCompare(x.last) || x.tie - y.tie).map((x) => x.a);
 const catKeys = () => Object.keys(CAT).filter((k) => BOOKS.some((b) => b.ck === k));
 const secHd = (k, h, p, right) => `<div class="sec-hd"><div><div class="kicker">${k}</div><h2>${h}</h2>${p ? `<p>${p}</p>` : ""}</div>${right || ""}</div>`;
+const MOBILE_SERIES = ["meomum", "philo", "first", "money"];
 function home() {
   const shelfBooks = sorted.filter((b) => b.pub <= TODAY && b.cover);
   const cols = [0, 1, 2, 3].map((c) => shelfBooks.filter((_, i) => i % 4 === c).slice(0, 7));
@@ -384,7 +385,7 @@ function home() {
 
   <section class="sec mist fade"><div class="wrap">
     ${secHd(t("serK"), t("serH"), "", `<a class="link" href="#/series">${t("seeAll")}</a>`)}
-    ${seriesGrid(SERIES.slice(0, innerWidth < 640 ? 4 : 6))}
+    ${seriesGrid(innerWidth < 640 ? SERIES.filter((x) => MOBILE_SERIES.includes(x.key)) : SERIES.slice(0, 6))}
   </div></section>
 
   ${worldSection()}
