@@ -1582,7 +1582,7 @@ function docPage(kicker, h1, lead, secs) {
 const ol = (items) => `<ul>${items.map((x, i) => `<li><i>${String(i + 1).padStart(2, "0")}</i><span>${x}</span></li>`).join("")}</ul>`;
 function pressPage() {
   const en = LANG === "en";
-  const boiler = en ? "THE BOOKMAN is a Seoul-based content group that began in 2012 as “The Book Man,” a channel sharing one good passage at a time. It now publishes essays, fiction, humanities, business and children’s books under six imprints — Book Romance, Book Pleasure, Book Moment, Book Farmers, MEOMUM and Book Crayon — and licenses Korean originals to publishers in more than 20 countries." : "더북맨은 2012년 좋은 글 한 편을 나누는 ‘책 읽어주는 남자’에서 시작한 콘텐츠 그룹입니다. 글과 영상으로 독자를 만나고, 북로망스·북플레저·북모먼트·북파머스·머묾·북크레용 여섯 개 출판 브랜드로 에세이, 소설, 인문, 경제·경영, 자녀교육 책을 펴내며, 국내 창작서의 판권을 20여 개 나라에 수출하고 있습니다.";
+  const boiler = en ? "THE BOOKMAN is a Seoul-based content group that began in 2012 as “The Book Man,” a channel sharing one good passage at a time. It now publishes essays, fiction, humanities, business and children’s books under six imprints — Book Romance, Book Pleasure, Book Moment, Book Farmers, MEOMUM and Book Crayon — and licenses Korean originals to publishers in more than 20 countries." : "더북맨그룹(TBMG)은 2012년 좋은 글 한 편을 나누는 ‘책 읽어주는 남자’에서 시작한 콘텐츠 그룹입니다. 글과 영상으로 독자를 만나고, 북로망스·북플레저·북모먼트·북파머스·머묾·북크레용 여섯 개 출판 브랜드로 에세이, 소설, 인문, 경제·경영, 자녀교육 책을 펴내며, 국내 창작서의 판권을 20여 개 나라에 수출하고 있습니다.";
   const logos = en ? [["TBMG (black)", "logo/tbmg-ink.svg"], ["TBMG (white)", "logo/tbmg-white.svg"], ["The Book Man wordmark", "logo/chaek-word-ink.svg"], ["The Book Man wordmark (white)", "logo/chaek-word-white.svg"], ["The Book Man mark", "logo/chaek-stack-ink.svg"]] : [["TBMG (검정)", "logo/tbmg-ink.svg"], ["TBMG (흰색)", "logo/tbmg-white.svg"], ["책 읽어주는 남자", "logo/chaek-word-ink.svg"], ["책 읽어주는 남자 (흰색)", "logo/chaek-word-white.svg"], ["책 읽어주는 남자 마크", "logo/chaek-stack-ink.svg"]];
   const rel = sorted.filter((b) => PRESS.includes(b.isbn));
   return `<div class="wrap"><div class="ph-hd"><div class="crumb"><a href="#/contact">${en ? "Contact" : "문의"}</a></div>
@@ -1607,7 +1607,7 @@ function imprintPage(slug) {
   if (!im) return notFound();
   const en = LANG === "en", L = sorted.filter((b) => b.brand === name), ig = SNS.find((x) => x.name === name);
   return `<div class="wrap"><div class="ph-hd"><div class="crumb"><a href="#/about">${en ? "Our story" : "우리 이야기"}</a></div>
-      <div class="kicker" style="margin-top:14px">${en ? "Imprint of THE BOOKMAN" : "더북맨 출판 브랜드"}</div><h1>${esc(brandName(name))}${en ? "" : ' <span style="font-size:.5em;color:var(--t3)">출판사</span>'}</h1>
+      <div class="kicker" style="margin-top:14px">${en ? "Imprint of THE BOOKMAN" : "더북맨그룹(TBMG) 출판 브랜드"}</div><h1>${esc(brandName(name))}${en ? "" : ' <span style="font-size:.5em;color:var(--t3)">출판사</span>'}</h1>
       <p>${esc(en ? im.en : im.ko)} · ${t("count")(L.length)}</p>
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:24px"><a class="btn" href="#/books?brand=${encodeURIComponent(name)}">${en ? "View in catalog" : "책 목록에서 보기"}</a>${ig ? `<a class="btn" href="${ig.url}" target="_blank" rel="noopener">Instagram @${esc(ig.handle)}</a>` : ""}</div></div>
     <div class="grid" style="padding:56px 0 112px">${L.map(cardHtml).join("")}</div></div>`;
