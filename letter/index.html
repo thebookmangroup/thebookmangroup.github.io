@@ -982,11 +982,8 @@ h3,
   display: none;
 }
 .reader.idle .side {
-  opacity: 1;
-}
-.reader.idle .side #bCard,
-.reader.idle .side .cap-l {
   opacity: 0;
+  pointer-events: none;
 }
 .side .lbl {
   display: block;
@@ -2090,7 +2087,7 @@ function openLetter(l) {
   applyMusic("song", true);
   setMode(R.mode, true);
   markSaved();
-  wake();
+  wake(6e3);
 }
 function closeLetter(silent) {
   if (!$("#reader").classList.contains("on")) return;
@@ -2327,13 +2324,13 @@ function finish() {
   $("#endpg").classList.add("on");
   $("#endpg").scrollTop = 0;
 }
-function wake() {
+function wake(ms = 3500) {
   const rd = $("#reader");
   rd.classList.remove("idle");
   clearTimeout(wake.t);
   wake.t = setTimeout(() => {
     if (!rd.classList.contains("held")) rd.classList.add("idle");
-  }, 3500);
+  }, ms);
 }
 (() => {
   const f = $("#frame");
