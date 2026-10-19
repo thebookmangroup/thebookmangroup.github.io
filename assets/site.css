@@ -443,8 +443,8 @@ header {
   }
 }
 @media (max-width: 900px) {
-  .figures.f5 {
-    margin-top: 28px;
+  .hero {
+    padding-bottom: 28px;
   }
 }
 .figures {
