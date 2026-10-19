@@ -933,6 +933,7 @@ function book(isbn) {
       <div class="bk-cover" style="${tintBg(b, 30)}">${coverHtml(b, true).replace('<div class="cover">', '<div class="cover bk3d"><i class="bk-spine"></i><i class="bk-glare"></i>')}${SOLD[b.isbn] ? `<div class="bk-tag">${LANG === "en" ? `Licensed in ${SOLD[b.isbn].length} ${SOLD[b.isbn].length === 1 ? "country" : "countries"}` : `${SOLD[b.isbn].length}개 나라 판권 계약`}</div>` : ""}</div>
       <div class="bk-body">
         ${en ? `<h3>${t("about_")}</h3><div class="desc">${esc(b.en.en_pitch)}</div>${praiseHtml(b)}` : introHtml(b)}
+        ${oneBookHtml([b.isbn], false)}
         ${PREV[b.isbn] ? `<div class="blk"><h3>${LANG === "en" ? "Earlier editions" : "이전 판"}</h3>${prevHtml(PREV[b.isbn])}</div>` : ""}
         ${GOODS[b.isbn] ? `<div class="blk"><h3>${LANG === "en" ? "Made with ILLUSIEN" : "일루지앵과 함께 만든 물건"}</h3><div class="goods">${GOODS[b.isbn].map((g) => `<a href="${g.url}" target="_blank" rel="noopener">${esc(LANG === "en" ? g.en : g.t)}<span>↗</span></a>`).join("")}</div><p class="goods-n">${LANG === "en" ? "ILLUSIEN is the lifestyle brand of The Book Man Group." : "일루지앵은 책 읽어주는 남자 그룹의 라이프스타일 브랜드입니다."}</p></div>` : ""}
         ${sold ? `<div class="blk"><h3>${t("soldLabel")} · ${t("soldIn")(sold.length)}</h3><div class="chips">${sold.map((c) => `<span>${esc(cname(c))}</span>`).join("")}</div></div>` : ""}
@@ -1392,13 +1393,29 @@ const AUTHOR_NEWS = {
     ]
   }
 };
+const ONE_BOOKS = { "9791193937310": [["2025", "충북 진천군", "‘진천의 책’", "", "https://www.news1.kr/local/sejong-chungbuk/5862151"], ["2024", "경기 광주시", "‘올해의 한 책’", "일반 부문", "http://www.kihoilbo.co.kr/news/articleView.html?idxno=1070676"], ["2024", "충남 아산시", "‘아산시 올해의 한 책’", "성인 부문", "https://www.skyedaily.com/news/news_view.html?ID=228809"], ["2024", "경기 용인특례시", "‘용인특례시 올해의 책’", "선정도서", "http://www.enewstoday.co.kr/news/articleView.html?idxno=2163355"], ["2024", "전남 나주시", "‘나주시 올해의 책’", "", "http://www.enewstoday.co.kr/news/articleView.html?idxno=2143959"], ["2024", "광주·전남 대학도서관 네트워크", "‘올해의 한 책’", "", "http://www.veritas-a.com/news/articleView.html?idxno=524343"]], "9791193937693": [["2026", "경기 광주시", "‘올해의 한 책’", "일반 부문", "https://www.newsis.com/view/NISX20260203_0003500477"]], "9791193937150": [["2025", "강원 양양군", "‘북돋는 양양 올해의 책’", "기타 부문", "https://www.kado.net/news/articleView.html?idxno=2009023"], ["2021", "경기 용인시", "‘용인시 올해의 책’", "일반도서", "https://www.ekn.kr/web/view.php?key=20210305010001020"]], "9791193937198": [["2026", "경기 광명시", "‘광명 올해의 책’", "일반 부문", "https://www.gukjenews.com/news/articleView.html?idxno=3526332"]], "9791191891478": [["2025", "경기 부천시", "‘부천의 책’", "만화 분야", "https://www.kgnews.co.kr/news/article.html?no=823082"]], "9791193937730": [["2025", "경북 문경시", "‘한 도시 한 책 읽기’", "문경시 새마을문고회", "https://www.kyongbuk.co.kr/news/articleView.html?idxno=4035214"], ["2024", "인천시교육청 북구도서관", "‘한 책’ 캠페인", "", "https://www.kmaeil.com/news/articleView.html?idxno=442818"]], "9791191891072": [["2023", "경기 광주시", "‘올해의 한 책’", "일반도서 부문 후보", "http://www.shinailbo.co.kr/news/articleView.html?idxno=1668326"], ["2016", "경북 문경시", "‘한 도시 한 책 읽기’", "", "http://www.kyongbuk.co.kr/?mod=news&act=articleView&idxno=971678"]], "9791191891041": [["2022", "서울 은평구립도서관", "‘올해의 한 책’", "", "https://www.lecturernews.com/news/articleView.html?idxno=108255"]] };
+function oneBookHtml(isbns, onAuthor) {
+  const en = LANG === "en";
+  const R = isbns.flatMap((i) => (ONE_BOOKS[i] || []).map((r) => [...r, i])).sort((x, y) => y[0].localeCompare(x[0]));
+  if (!R.length) return "";
+  const multi = new Set(R.map((r) => r[5])).size > 1;
+  const li = (r) => `<li><span class="ob-r">${esc(r[0])}</span><span><a href="${esc(r[4])}" target="_blank" rel="noopener">${esc(r[1])} ${esc(r[2])}</a><small>${[multi && byIsbn[r[5]] ? `『${esc(title(byIsbn[r[5]]))}』` : "", esc(r[3])].filter(Boolean).join(" · ")}</small></span></li>`;
+  const head = en ? `Chosen for ${R.length} ‘One Book’ community reading campaign${R.length > 1 ? "s" : ""} in Korea` : `‘한 책 읽기’ 선정 ${R.length}곳`;
+  const max = 4, list = `<ul>${R.slice(0, max).map(li).join("")}</ul>${R.length > max ? `<details><summary><span class="ob-o">${en ? "More" : "더 보기"} (${R.length - max})</span><span class="ob-c">${en ? "Less" : "접기"}</span></summary><ul>${R.slice(max).map(li).join("")}</ul></details>` : ""}`;
+  return onAuthor ? `<div class="anw-b ob"><div class="adb-k">${en ? "One Book campaigns" : "한 책 읽기"}</div><div>${list}</div></div>` : `<div class="blk ob"><h3>${head}</h3>${list}</div>`;
+}
 function authorNews(a) {
   const N = AUTHOR_NEWS[a.name];
-  if (!N) return "";
+  if (!N) {
+    const o = oneBookHtml(a.isbns, true);
+    return o ? `<div class="anw">${o}</div>` : "";
+  }
   const en = LANG === "en";
   const row = (d, t2, sub2, url) => `<li><span class="anw-d">${esc(d)}</span><span class="anw-t">${url ? `<a href="${esc(url)}" target="_blank" rel="noopener">${esc(t2)}</a>` : esc(t2)}${sub2 ? `<small>${esc(sub2)}</small>` : ""}</span></li>`;
   const box = (k, list, max) => list && list.length ? `<div class="anw-b"><div class="adb-k">${k}</div><div><ul>${list.slice(0, max).map((x) => row(...x)).join("")}</ul>${list.length > max ? `<details><summary>${en ? "More" : "더 보기"} (${list.length - max})</summary><ul>${list.slice(max).map((x) => row(...x)).join("")}</ul></details>` : ""}</div></div>` : "";
-  return `<div class="anw">${box(en ? "Awards & selections" : "수상 · 선정", N.awards, 6)}${box(en ? "Press" : "기사 · 인터뷰", N.press, 4)}${box(en ? "Events" : "행사 · 북토크", N.events, 5)}</div>`;
+  const ob = oneBookHtml(a.isbns, true);
+  const aw = ob ? (N.awards || []).filter((x) => !/한 책|올해의 책/.test(x[1])) : N.awards;
+  return `<div class="anw">${box(en ? "Awards & selections" : "수상 · 선정", aw, 6)}${ob}${box(en ? "Press" : "기사 · 인터뷰", N.press, 4)}${box(en ? "Events" : "행사 · 북토크", N.events, 5)}</div>`;
 }
 function authorPage(id) {
   const a = byAu[id];
