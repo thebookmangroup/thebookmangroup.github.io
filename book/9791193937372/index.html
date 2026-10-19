@@ -85,7 +85,7 @@
       .gl-band .gl-r{text-align:right;flex:0 0 auto}.gl-band .t2{font:400 13.5px Pretendard,sans-serif;color:rgba(255,255,255,.6);letter-spacing:-.02em}
       .gl-band a.b2{display:inline-flex;align-items:center;height:46px;margin-top:12px;padding:0 26px;border-radius:0;border:1px solid rgba(255,255,255,.7);color:#fff;font:500 14px Pretendard,sans-serif;text-decoration:none;transition:background .2s,color .2s}.gl-band a.b2:hover{background:#fff;color:#0b0b0c}
       .gl-band a.b,.gl-night a.b{display:inline-flex;align-items:center;height:48px;margin-top:26px;padding:0 34px;border-radius:0;border:1px solid #fff;background:#fff;color:#000;font:500 15px Pretendard,sans-serif;text-decoration:none;transition:background .2s,color .2s}.gl-band a.b:hover,.gl-night a.b:hover{background:transparent;color:#fff}
-      .gl-band .s,.gl-night .s{display:block;margin-top:16px;font:400 12.5px Pretendard,sans-serif;color:rgba(255,255,255,.42)}
+      .gl-band .s,.gl-night .s{display:block;margin-top:16px;font:400 12.5px Pretendard,sans-serif;color:rgba(255,255,255,.42)}.gl-night .s.nth{margin-top:6px}
       .gl-line{display:inline-flex;gap:8px;align-items:center;margin:14px 0 4px;padding:10px 14px;border-radius:0;background:#0b0b0c;color:#f5f5f7!important;font:500 13.5px Pretendard,sans-serif;text-decoration:none}
       .gl-line i{font-style:normal;color:rgba(255,255,255,.55)}
       .gl-moon{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;border:0;background:transparent;cursor:pointer;color:inherit;margin-right:2px}.gl-moon svg{width:18px;height:18px}
@@ -118,10 +118,14 @@
         ${nxt && (new Date(`${nxt.date}T22:00:00+09:00`) - Date.now()) <= 3 * 3600e3 ? `<div class="when">${soon()}</div>` : ''}</div>
       <div class="gl-r"><div class="t2">지난밤의 편지 · No.${t.no} ${esc(t.title)}</div>
         <a class="b2" href="${LETTER}#/l/${t.no}">지난밤 편지 읽기 →</a></div></section></div>`;
+    // '네 번째 밤편지' — 번호 대신 우리말 차례 (대표 10-19)
+    const nth = n => { if (n === 1) return '첫 번째'; if (n >= 100) return `${n}번째`;
+      const T = ['', '열', '스물', '서른', '마흔', '쉰', '예순', '일흔', '여든', '아흔'], O = ['', '한', '두', '세', '네', '다섯', '여섯', '일곱', '여덟', '아홉'];
+      const t = Math.floor(n / 10), o = n % 10; return (t === 2 && !o ? '스무' : T[t] + O[o]) + ' 번째' };
     const night = () => `<section class="gl-night"><div class="ph" style="background-image:url(${LETTER}${t.img})"></div><div class="in">
       <div class="k">밤 10시, 오늘의 밤편지가 도착했어요</div>${t.hook ? `<p class="q">${esc(t.hook)}</p>` : ''}
       <div class="t">${esc(t.title)}</div><a class="b" href="${LETTER}#/l/${t.no}">편지 읽기</a>
-      <span class="s">바쁜 하루 뒤에 읽는 책 읽어주는 남자 밤편지</span></div><div class="dn">아래로 내리면 더북맨그룹 ↓</div></section>`;
+      <span class="s">바쁜 하루 뒤에 읽는 책 읽어주는 남자의 밤편지</span><span class="s nth">${nth(t.no)} 밤편지</span></div><div class="dn">아래로 내리면 더북맨그룹 ↓</div></section>`;
     function decorate() {
       document.body.classList.toggle('gl-n', MODE === 'night');
       const nav = document.getElementById('nav');
