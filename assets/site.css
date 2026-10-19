@@ -2007,6 +2007,35 @@ body {
   font-weight: 500;
   letter-spacing: .02em;
 }
+.lang {
+  border: 1px solid var(--ink);
+  gap: 0;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: .05em;
+  color: var(--ink);
+  margin-left: 4px;
+}
+.lang button {
+  padding: 7px 12px;
+  line-height: 1;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  transition: background .2s, color .2s;
+}
+.lang button.on {
+  background: var(--ink);
+  color: var(--paper);
+}
+.lang button:not(.on):hover {
+  background: var(--mist);
+}
+@media (max-width: 860px) {
+  .lang button {
+    padding: 7px 10px;
+  }
+}
 .search-layer {
   background: rgba(250, 250, 248, .98);
 }
