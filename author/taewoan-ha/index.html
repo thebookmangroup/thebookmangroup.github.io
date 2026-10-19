@@ -125,7 +125,7 @@
     function decorate() {
       document.body.classList.toggle('gl-n', MODE === 'night');
       const nav = document.getElementById('nav');
-      if (nav && !nav.querySelector('.gl-nav')) nav.insertAdjacentHTML('beforeend', `<a class="gl-nav" href="${LETTER}">밤편지</a>`);
+      // 위 메뉴 '밤편지'는 뺌 — 달 버튼과 밤 10시 화면으로만 (대표 10-19)
       const hr = document.querySelector('#hdr .hd-r');
       if (hr && !hr.querySelector('.gl-moon')) { hr.insertAdjacentHTML('afterbegin', '<button class="gl-moon" aria-label="밤편지 화면으로"></button>'); hr.querySelector('.gl-moon').onclick = () => fadeTo(MODE === 'night' ? 'day' : 'night') }
       const mb = hr && hr.querySelector('.gl-moon'); if (mb && mb.dataset.m !== MODE) { mb.dataset.m = MODE; mb.innerHTML = MODE === 'night' ? SUN : MOON; mb.title = MODE === 'night' ? '낮으로' : '밤으로' }
