@@ -1276,6 +1276,73 @@ h3,
   color: var(--dim);
   margin: 34px 0 10px;
 }
+.cmt-w textarea,
+.cmt-w input {
+  width: 100%;
+  border: 0;
+  border-radius: 12px;
+  background: var(--s1);
+  padding: 12px 14px;
+  font-size: 15px;
+  line-height: 1.55;
+  resize: none;
+  outline: none;
+}
+.cmt-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+.cmt-row input {
+  flex: 1;
+  min-width: 0;
+  font-size: 14px;
+}
+.cmt-go {
+  flex: 0 0 auto;
+  padding: 0 18px;
+  border-radius: 12px;
+  background: #fff;
+  color: #000;
+  font-weight: 600;
+  font-size: 14px;
+}
+.cmt-list {
+  margin-top: 6px;
+}
+.cmt {
+  padding: 14px 0;
+  border-bottom: .5px solid var(--line);
+}
+.cmt p {
+  font-size: 15px;
+  line-height: 1.65;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.cmt .ft {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 6px;
+  font-size: 12.5px;
+  color: var(--faint);
+}
+.cmt .cheer {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12.5px;
+  color: var(--dim);
+}
+.cmt .cheer.on {
+  color: var(--warm);
+}
+.cmt-empty {
+  font-size: 13px;
+  color: var(--faint);
+  padding: 12px 0;
+}
 .songline {
   font-weight: 600;
   font-size: 16px;
@@ -2282,7 +2349,7 @@ function like(force) {
   store.set("saved", on ? [.../* @__PURE__ */ new Set([...s, key])] : s.filter((x) => x !== key));
   markSaved();
   if (on) {
-    ev("save");
+    ev("save", "&k=" + k);
     const b = $("#burst");
     b.classList.remove("go");
     void b.offsetWidth;
@@ -2312,6 +2379,10 @@ function finish() {
     <h3>${first ? "편지를 다 읽었어요" : "다시 읽어 주셔서 고마워요"}</h3>
     <p class="sub">No.${l.no} ${esc(l.title)} · 지금까지 ${s.length}통</p>
     ${l.own ? `<div class="li" style="margin-top:22px;border-radius:14px;background:var(--s1)"><span class="ic">${ic("note")}</span><div><b>${esc(l.own[0].name)}</b><small>편지와 함께 흐른 노래 · 책 읽어주는 남자가 만들었어요</small></div><button class="pill" data-replay>처음부터</button></div>` : ""}
+    <h4>응원 한마디</h4>
+    <div class="cmt-w"><textarea id="cmT" maxlength="120" rows="2" placeholder="이 편지를 읽은 마음을 한 줄로 남겨 주세요"></textarea>
+      <div class="cmt-row"><input id="cmN" maxlength="12" placeholder="이름 (안 써도 돼요)"><button class="cmt-go" data-cmt="${l.no}">남기기</button></div></div>
+    <div id="cmList" class="cmt-list"></div>
     <h4>마음에 남은 글</h4>
     ${l.items.map((i, k) => `<div class="keep"><div><p>${esc(i.text)}</p><span>${esc(srcOf(i))}</span></div><button class="heart${saved.includes(l.no + "-" + k) ? " on" : ""}" data-save="${l.no}-${k}">${ic("heart")}</button></div>`).join("")}
     <h4>이 편지에 담긴 책</h4>
@@ -2323,6 +2394,18 @@ function finish() {
     ${n ? `<p class="note" style="text-align:center;margin-top:16px">다음 편지 No.${n.no}는 ${untilText(n)} 도착해요</p>` : ""}`;
   $("#endpg").classList.add("on");
   $("#endpg").scrollTop = 0;
+  loadComments(l.no);
+}
+function cmtHtml(c) {
+  const on = store.get("cheers", []).includes(c.id);
+  return `<div class="cmt"><p>${esc(c.t)}</p><div class="ft"><span>${esc(c.n || "익명")} · ${c.at.slice(5, 10).replace("-", ".")}</span><button class="cheer${on ? " on" : ""}" data-cheer="${c.id}">힘이 솟아요${c.cheers ? " " + c.cheers : ""}</button></div></div>`;
+}
+function loadComments(no) {
+  fetch(LAPI + "/api/letter/comments?no=" + no).then((r) => r.json()).then((j) => {
+    const a = j.comments || [];
+    $("#cmList").innerHTML = a.length ? a.map(cmtHtml).join("") : '<p class="cmt-empty">첫 응원을 남겨 주세요.</p>';
+  }).catch(() => {
+  });
 }
 function wake(ms = 3500) {
   const rd = $("#reader");
@@ -2420,6 +2503,7 @@ async function captureFlow() {
   const card2 = await quoteCard(true);
   if (!card2) return endCapture();
   R.cardFile = card2.file;
+  R.capK = k;
   sheet(`<h3 style="font-size:18px">이 장면이 캡처돼요</h3>
     <img src="${card2.url}" alt="" style="display:block;width:56%;margin:14px auto 4px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.45)">
     <div class="row2" style="margin-top:14px"><button class="cta" data-capclose>닫기</button><button class="cta pri" data-cardsave>${navigator.canShare?.({ files: [card2.file] }) ? "저장·공유" : "사진 저장"}</button></div>`);
@@ -2657,10 +2741,45 @@ document.addEventListener("click", (e) => {
     $("#app").innerHTML = archive();
     return;
   }
+  if (t.dataset.cmt) {
+    const tx = $("#cmT").value.trim();
+    if (tx.length < 2) return toast("한마디를 적어 주세요");
+    t.disabled = true;
+    return fetch(LAPI + "/api/letter/comments", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ no: +t.dataset.cmt, t: tx, n: $("#cmN").value.trim() }) }).then((r) => r.json()).then((j) => {
+      t.disabled = false;
+      if (j.error) return toast(j.error);
+      if (j.status === "ok") {
+        $("#cmT").value = "";
+        ev("cmt");
+        const e2 = $("#cmList").querySelector(".cmt-empty");
+        if (e2) e2.remove();
+        $("#cmList").insertAdjacentHTML("afterbegin", cmtHtml(j.comment));
+        toast("고마워요. 응원이 남았어요");
+      } else if (j.status === "hide") toast("따뜻한 말만 보이도록 하고 있어요. 다르게 적어 주시겠어요?");
+      else {
+        $("#cmT").value = "";
+        toast("확인한 뒤에 보여 드릴게요");
+      }
+    }).catch(() => {
+      t.disabled = false;
+      toast("지금은 남길 수 없어요");
+    });
+  }
+  if (t.dataset.cheer) {
+    const k = t.dataset.cheer, c = store.get("cheers", []), on = !c.includes(k);
+    store.set("cheers", on ? [...c, k] : c.filter((x) => x !== k));
+    t.classList.toggle("on", on);
+    const n = (parseInt(t.textContent.replace(/\D/g, "")) || 0) + (on ? 1 : -1);
+    t.textContent = "힘이 솟아요" + (n > 0 ? " " + n : "");
+    fetch(LAPI + "/api/letter/comments/" + k, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ cheer: on ? 1 : -1 }) }).catch(() => {
+    });
+    return;
+  }
   if (t.dataset.save) {
     const s = store.get("saved", []), k = t.dataset.save, on = !s.includes(k);
     store.set("saved", on ? [...s, k] : s.filter((x) => x !== k));
     t.classList.toggle("on", on);
+    if (on) ev("save", "&k=" + k.split("-")[1]);
     toast(on ? "내 서랍에 담았어요" : "서랍에서 뺐어요");
     return;
   }
@@ -2691,7 +2810,7 @@ document.addEventListener("click", (e) => {
     return endCapture();
   }
   if (t.dataset.cardsave !== void 0) {
-    ev("cap");
+    ev("cap", R.capK != null ? "&k=" + R.capK : "");
     const f = R.cardFile;
     closeSheet();
     endCapture();
