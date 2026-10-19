@@ -119,7 +119,7 @@
         <a class="b2" href="${LETTER}#/l/${t.no}">지난밤 편지 읽기 →</a></div></section></div>`;
     const night = () => `<section class="gl-night"><div class="ph" style="background-image:url(${LETTER}${t.img})"></div><div class="in">
       <div class="k">밤 10시, 오늘의 밤편지가 도착했어요</div>${t.hook ? `<p class="q">${esc(t.hook)}</p>` : ''}
-      <div class="t">No.${t.no} ${esc(t.title)}</div><a class="b" href="${LETTER}#/l/${t.no}">편지 읽기</a>
+      <div class="t">${esc(t.title)}</div><a class="b" href="${LETTER}#/l/${t.no}">편지 읽기</a>
       <span class="s">바쁜 하루 뒤에 읽는 책 읽어주는 남자 밤편지</span></div><div class="dn">아래로 내리면 더북맨그룹 ↓</div></section>`;
     function decorate() {
       document.body.classList.toggle('gl-n', MODE === 'night');
