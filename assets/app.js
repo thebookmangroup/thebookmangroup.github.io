@@ -67,7 +67,7 @@ const IMPRINT_PIN = {
 };
 const IMPRINT_TINT = { "북로망스": "#e07a95", "북플레저": "#5e9e6e", "북모먼트": "#c8553d", "북파머스": "#e0b42a", "머묾": "#8a5a3c", "북크레용": "#4f8fd0" };
 const IMPRINT_SLUG = { "북로망스": "book-romance", "북플레저": "book-pleasure", "북모먼트": "book-moment", "북파머스": "book-farmers", "머묾": "meomum", "북크레용": "book-crayon" };
-const MAIL = { rights: "rights@thebookman.co.kr", main: "tbmg@thebookman.co.kr" };
+const MAIL = { rights: "rights@thebookman.co.kr", main: "tbmg@thebookman.co.kr", jobs: "book@thebookman.co.kr" };
 const CAT = {
   essay: { ko: "에세이", en: "Essay" },
   fiction: { ko: "소설", en: "Fiction" },
@@ -1705,7 +1705,7 @@ const cultureSec = () => `<div class="wrap"><section class="culture">
 const peopleText = () => LANG === "en" ? '<p>Making things and sharing them are, in the end, things people do.<br class="pc"> So the first thing we think about is whether the people we work with are happy.</p><p>We put our passion into work we love, and share the joy of getting it done.<br class="pc"> That is why so many of our colleagues have been with us for a long time.</p>' : '<p>콘텐츠를 만드는 것도, 알리는 것도 결국 사람이 합니다.<br class="pc"> 그래서 우리는 함께 일하는 사람이 행복한 것을 가장 먼저 생각합니다.</p><p>각자 좋아하는 일에 열정을 쏟고, 해냈다는 기쁨을 함께 나눕니다.<br class="pc"> 오래 함께한 동료가 많은 것도 그래서입니다.</p>';
 function careersPage() {
   const en = LANG === "en";
-  const mail = `mailto:${MAIL.main}?subject=${encodeURIComponent("[입사 지원] 지원 분야: ")}&body=${encodeURIComponent("지원 분야:\n이름:\n연락처:\n\n(이력서와 포트폴리오를 붙여 보내 주세요)")}`;
+  const mail = `mailto:${MAIL.jobs}?subject=${encodeURIComponent("[입사 지원] 지원 분야: ")}&body=${encodeURIComponent("지원 분야:\n이름:\n연락처:\n\n(이력서와 포트폴리오를 붙여 보내 주세요)")}`;
   const open = JOBS.filter((j) => !j.due || j.due >= TODAY);
   return docPage(
     "",
@@ -1715,7 +1715,7 @@ function careersPage() {
       { h: en ? "It all comes down to people" : "사람이 하는 일입니다", body: peopleText() },
       { h: en ? "How we work together" : "우리가 일하는 문화", body: perksList() },
       { h: en ? "Open positions" : "지금 모집 중", body: open.length ? ol(open.map((j) => `<b>${esc(j.t)}</b>${j.type ? ` · ${esc(j.type)}` : ""}${j.due ? ` · ${en ? "until" : "마감"} ${esc(j.due)}` : ""}${j.body ? `<br>${esc(j.body)}` : ""}`)) : `<p>${en ? "There are no open positions right now. New openings will be posted on this page." : "지금은 진행 중인 채용이 없습니다. 새 공고가 열리면 이 페이지에 올립니다."}</p>` },
-      { h: en ? "How to apply" : "지원 방법", body: `<p>${en ? "Email your CV (and portfolio, if any) to" : "이력서(포트폴리오가 있으면 함께)를 메일로 보내 주세요."} <b>${MAIL.main}</b></p><a class="btn ink" href="${mail}">${en ? "Email your application" : "지원 메일 쓰기"}</a>` },
+      { h: en ? "How to apply" : "지원 방법", body: `<p>${en ? "Email your CV (and portfolio, if any) to" : "이력서(포트폴리오가 있으면 함께)를 메일로 보내 주세요."} <b>${MAIL.jobs}</b></p><a class="btn ink" href="${mail}">${en ? "Email your application" : "지원 메일 쓰기"}</a>` },
       { h: en ? "Freelance partners" : "함께 일할 외부 파트너", body: `<p>${en ? "We also work with freelance translators, designers and proofreaders. Send a short introduction and samples." : "번역, 디자인, 교정·교열을 함께할 외부 파트너도 찾습니다. 간단한 소개와 작업 샘플을 보내 주세요."}</p>` }
     ]
   );
