@@ -2164,7 +2164,7 @@ function roll(from = 0) {
   stopAll();
   const r = $("#roll"), st = $("#stage");
   requestAnimationFrame(() => {
-    const dist = st.clientHeight * 0.8 + r.offsetHeight;
+    const dist = st.clientHeight * 0.8 + r.offsetHeight - st.clientHeight * 0.3;
     R.dur = dist / SPEEDS[R.sp].v * 1e3;
     R.delay = from ? 0 : 1200;
     R.anim = r.animate([{ transform: "translateY(0)" }, { transform: `translateY(${-dist}px)` }], { duration: R.dur, delay: R.delay, easing: "linear", fill: "forwards" });
