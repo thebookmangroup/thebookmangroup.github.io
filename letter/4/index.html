@@ -482,6 +482,46 @@ h3,
   padding: 18px 0;
   border-bottom: .5px solid var(--line);
 }
+.ex {
+  margin-top: 26px;
+  padding: 4px 0 4px 16px;
+  border-left: 1px solid rgba(255, 255, 255, .22);
+}
+.ex-h {
+  font-size: 12.5px;
+  color: var(--faint);
+  margin-bottom: 12px;
+}
+.ex-h span {
+  margin-left: 6px;
+  font-size: 11px;
+  border: .5px solid var(--line2);
+  border-radius: 4px;
+  padding: 1px 5px;
+}
+.ex-k {
+  font-size: 12px;
+  color: rgba(255, 255, 255, .55);
+  letter-spacing: .04em;
+}
+.ex h4 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 4px 0 8px;
+}
+.ex-b {
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: 15px;
+  line-height: 1.9;
+  white-space: pre-line;
+  color: rgba(255, 255, 255, .85);
+}
+.ex-n {
+  font-size: 12.5px;
+  color: var(--faint);
+  margin-top: 8px;
+}
 .story h3 {
   font-weight: 600;
   font-size: 16.5px;
@@ -2047,11 +2087,14 @@ function stories() {
   return `<div class="wrap pg-in"><section>
     <h2 class="ttl">사연</h2><p class="lead">당신의 이야기를 보내 주세요. 편집자가 읽고, 소개를 허락한 사연은 편지 끝에 '오늘의 사연'으로 실려요.</p>
     <button class="cta line" data-write>${ic("pen")}사연 보내기</button>
+     ${pub.some((x) => x.pick) ? "" : `<div class="ex"><div class="ex-h">편지 끝에 이렇게 실려요<span>예시</span></div><p class="ex-k">오늘의 사연</p><h4>퇴근 버스에서</h4><p class="ex-b">버스 맨 뒷자리에서
+어젯밤 편지를 다시 읽었어요.
+창밖이 갑자기 흐려지더라고요.</p><p class="ex-n">— 창가자리 님</p></div>`}
     <div style="margin-top:22px">${all.map((s) => `<article class="story" data-story>
       <h3>${s.pick ? '<span class="tag pick">편지에 실림</span>' : ""}${s.sample ? '<span class="tag">시안 예시</span>' : ""}${s.mine ? '<span class="tag">내 사연 · 검토 중</span>' : ""}${esc(s.t)}</h3>
       <p>${esc(s.b)}</p>
       <div class="ft"><span>${esc(s.n || "익명")} · ${esc(s.d)}</span><button class="like${liked.includes(s.id) ? " on" : ""}" data-like="${s.id}">${ic("heart")}공감</button></div></article>`).join("")}</div>
-    <p class="note" style="margin-top:16px">사연은 편집자가 읽은 뒤에만 공개돼요. 이름·연락처는 받지 않아요.</p></section>${foot()}</div>`;
+    <p class="note" style="margin-top:16px">사연을 골라 그날 밤 편지 끝에 싣습니다. 실릴 때는 편집팀이 뜻은 그대로 두고 읽기 좋게 다듬어요. 이름·연락처는 받지 않아요.</p></section>${foot()}</div>`;
 }
 const WORDS = ["새벽", "골목", "등불", "편지", "바다", "눈송이", "오후", "창가", "들꽃", "별빛", "버스", "우체통"];
 function myKey() {
@@ -2733,7 +2776,7 @@ function writeSheet(from) {
     <input class="field" id="sN" maxlength="16" placeholder="불릴 이름 (비워 두면 '익명')">
     <div class="seg"><input type="radio" name="vis" id="v1" checked><label for="v1">편지·사연함에 소개해도 돼요</label><input type="radio" name="vis" id="v2"><label for="v2">편집자만 읽어 주세요</label></div>
     <button class="cta pri" data-send>사연 보내기</button>
-    <p class="note">개인정보(실명·연락처·회사명)는 적지 말아 주세요. 소개할 때 편집자가 맞춤법만 다듬을 수 있어요.</p>`);
+    <p class="note">개인정보(실명·연락처·회사명)는 적지 말아 주세요. 소개할 때 편집팀이 뜻은 그대로 두고 읽기 좋게 다듬어요.</p>`);
 }
 document.addEventListener("click", (e) => {
   const t = e.target.closest("button,a");
