@@ -2237,12 +2237,12 @@ function openLetter(l) {
   R.prog = {};
   ev("open");
   $("#startHint").style.opacity = 1;
-  setTimeout(() => $("#startHint").style.opacity = 0, 6e3);
+  setTimeout(() => $("#startHint").style.opacity = 0, 5e3);
   $("#bSong").style.display = l.own ? "none" : "";
   applyMusic("song", true);
   setMode(R.mode, true);
   markSaved();
-  wake(6e3);
+  wake(5e3);
 }
 function closeLetter(silent) {
   if (!$("#reader").classList.contains("on")) return;
