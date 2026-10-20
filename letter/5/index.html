@@ -2085,7 +2085,7 @@ function stories() {
   const mineOnly = mine.filter((m) => !pub.some((p) => p.id === m.id));
   const all = [...mineOnly.map((s) => ({ ...s, mine: true })), ...pub, ...pub.length || LAPI ? [] : SAMPLE.map((s, i) => ({ ...s, id: "s" + i, sample: true }))];
   return `<div class="wrap pg-in"><section>
-    <h2 class="ttl">사연</h2><p class="lead">당신의 이야기를 보내 주세요. 편집팀이 읽고, 소개를 허락한 사연 가운데 골라 밤편지에 실어요.</p>
+    <h2 class="ttl">사연</h2><p class="lead">당신의 이야기를 보내 주세요. 편집팀이 읽고 골라 밤편지에 실어요.</p>
     <button class="cta line" data-write>${ic("pen")}사연 보내기</button>
      ${pub.some((x) => x.pick) ? "" : `<div class="ex"><div class="ex-h">밤편지에 이렇게 실려요<span>예시</span></div><p class="ex-k">오늘의 사연</p><h4>퇴근 버스에서</h4><p class="ex-b">버스 맨 뒷자리에서
 어젯밤 편지를 다시 읽었어요.
