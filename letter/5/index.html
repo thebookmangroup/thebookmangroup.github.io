@@ -1164,13 +1164,15 @@ h3,
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  bottom: calc(96px + env(safe-area-inset-bottom));
+  bottom: calc(52px + env(safe-area-inset-bottom));
   white-space: nowrap;
+  text-align: center;
+  line-height: 1.65;
   font-size: 12px;
   color: #fff;
   background: rgba(0, 0, 0, .55);
-  padding: 7px 13px;
-  border-radius: 999px;
+  padding: 8px 16px;
+  border-radius: 16px;
   z-index: 7;
   transition: opacity 1.5s;
   pointer-events: none;
@@ -1923,7 +1925,7 @@ textarea.field {
     <div class="segs" id="segs"></div>
     <div class="stage" id="stage"><div class="roll" id="roll"></div></div>
     <div class="pg" id="pg"></div>
-    <div class="starthint" id="startHint">톡 누르면 멈추고 📷 캡처 · ♡ 담기 버튼이 나와요</div>
+    <div class="starthint" id="startHint">♪ 소리를 조금 키워 주세요<br>톡 누르면 멈춤 · 담기 · 캡처</div>
     <div class="side" id="side">
       <button id="bHeart" aria-label="서랍에 담기"></button><span class="lbl">담기</span>
       <button id="bCard" aria-label="문장 캡처"></button><span class="lbl cap-l">캡처</span>
