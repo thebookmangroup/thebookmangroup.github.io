@@ -552,6 +552,12 @@ h3,
   background: #fff;
   color: #000;
 }
+.cta.line {
+  background: transparent;
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, .3);
+  font-weight: 500;
+}
 .collect {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -596,6 +602,19 @@ h3,
   font-size: 15.5px;
   line-height: 1.9;
   white-space: pre-line;
+}
+.quote p.cl:not(.open) {
+  display: -webkit-box;
+  -webkit-line-clamp: 6;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.quote p.cut {
+  cursor: pointer;
+}
+.quote p.cut:not(.open) {
+  -webkit-mask-image: linear-gradient(#000 60%, transparent);
+  mask-image: linear-gradient(#000 60%, transparent);
 }
 .quote .src {
   display: flex;
@@ -833,20 +852,20 @@ h3,
   position: absolute;
   left: 0;
   right: 0;
-  top: 0;
-  bottom: 0;
+  top: calc(62px + env(safe-area-inset-top));
+  bottom: calc(66px + env(safe-area-inset-bottom));
   overflow: hidden;
   -webkit-mask-image:
     linear-gradient(
       transparent 0,
-      #000 20%,
-      #000 76%,
+      #000 16%,
+      #000 78%,
       transparent 100%);
   mask-image:
     linear-gradient(
       transparent 0,
-      #000 20%,
-      #000 76%,
+      #000 16%,
+      #000 78%,
       transparent 100%);
   transition: top .45s ease;
 }
@@ -1768,6 +1787,9 @@ textarea.field {
   margin-top: 18px;
   border-top: .5px solid var(--line2);
 }
+.rows li.rd a {
+  opacity: .42;
+}
 .rows a {
   display: flex;
   align-items: baseline;
@@ -1993,7 +2015,7 @@ function home(pick) {
   const t = pick || latest(), n = upcoming();
   return `<section class="hm">
     <div class="hm-in">
-      ${t.hook ? `<p class="hm-hook">${blocksOf(t.hook).map((b) => b.map(esc).join("<br>")).join("<br>")}</p>` : ""}
+      ${t.hook ? `<p class="hm-hook">${blocksOf(t.hook, /\n/.test(t.hook) ? "br" : 0).map((b) => b.map(esc).join("<br>")).join("<br>")}</p>` : ""}
       <span class="hm-no">No.${t.no} · ${whenText(t)} 도착</span>
       <h1>${esc(t.title)}</h1>
       <button class="hm-open" data-open="${t.no}">편지 읽기</button>
@@ -2006,7 +2028,7 @@ function archive() {
   const got = store.get("stamps", []);
   const list = [...L].reverse().filter(arrived);
   return `<div class="wrap pg-in"><h2 class="ttl">지난 편지</h2>
-    <ul class="rows">${list.map((l) => `<li><a href="#/l/${l.no}" data-open="${l.no}"><span class="r-no">No.${l.no}</span><span class="r-t">${esc(l.title)}${l.hook ? `<span class="r-h">${esc(l.hook)}</span>` : ""}</span><span class="r-d">${got.includes(l.no) ? "읽음 · " : ""}${dot(l.date).slice(5)}</span></a></li>`).join("")}</ul>
+    <ul class="rows">${list.map((l) => `<li${got.includes(l.no) ? ' class="rd"' : ""}><a href="#/l/${l.no}" data-open="${l.no}"><span class="r-no">No.${l.no}</span><span class="r-t">${esc(l.title)}${l.hook ? `<span class="r-h">${esc(l.hook)}</span>` : ""}</span><span class="r-d">${dot(l.date).slice(5)}</span></a></li>`).join("")}</ul>
     ${foot()}</div>`;
 }
 const SAMPLE = [
@@ -2020,7 +2042,7 @@ function stories() {
   const all = [...mineOnly.map((s) => ({ ...s, mine: true })), ...pub, ...pub.length || LAPI ? [] : SAMPLE.map((s, i) => ({ ...s, id: "s" + i, sample: true }))];
   return `<div class="wrap pg-in"><section>
     <h2 class="ttl">사연</h2><p class="lead">당신의 이야기를 보내 주세요. 편집자가 읽고, 소개를 허락한 사연은 편지 끝에 '오늘의 사연'으로 실려요.</p>
-    <button class="cta pri" data-write>${ic("pen")}사연 보내기</button>
+    <button class="cta line" data-write>${ic("pen")}사연 보내기</button>
     <div style="margin-top:22px">${all.map((s) => `<article class="story" data-story>
       <h3>${s.pick ? '<span class="tag pick">편지에 실림</span>' : ""}${s.sample ? '<span class="tag">시안 예시</span>' : ""}${s.mine ? '<span class="tag">내 사연 · 검토 중</span>' : ""}${esc(s.t)}</h3>
       <p>${esc(s.b)}</p>
@@ -2037,7 +2059,19 @@ function myKey() {
   }
   return k;
 }
+function clampQuotes() {
+  document.querySelectorAll(".quote p").forEach((p) => {
+    p.classList.add("cl");
+    if (p.scrollHeight > p.clientHeight + 4) p.classList.add("cut");
+    else p.classList.remove("cl");
+  });
+}
+document.addEventListener("click", (e) => {
+  const p = e.target.closest(".quote p.cut");
+  if (p) p.classList.toggle("open");
+});
 function drawer() {
+  setTimeout(clampQuotes, 0);
   const got = store.get("stamps", []), saved = store.get("saved", []);
   const qs = saved.map((k) => {
     const [no, i] = k.split("-").map(Number);
@@ -2047,10 +2081,10 @@ function drawer() {
   return `<div class="wrap pg-in"><h2 class="ttl">서랍</h2>
     <p class="lead">읽은 편지 ${got.length}통 · 담아 둔 글 ${qs.length}편</p>
     ${qs.length ? qs.map(({ l, it, k }) => `<div class="quote"><p>${it.br ? fmt(it.br, "br") : fmt(it.text, it.ext)}</p><div class="src"><span>${esc(srcOf(it))} · <a href="#/l/${l.no}" data-open="${l.no}">No.${l.no}</a></span><button class="heart on" data-unsave="${k}">${ic("heart")}</button></div></div>`).join("") : `<p class="empty">편지를 읽다가 마음에 남는 글이 있으면 ♡를 누르거나 두 번 톡 치세요.<br>그 글이 여기에 담겨요.</p>`}
-    <details class="keyfold"><summary>다른 기기에서 열기</summary>
+    ${qs.length ? `<details class="keyfold"><summary>다른 기기에서 열기</summary>
       <div class="keybox"><span class="lbl">이 기기의 서랍 열쇠</span><b>${myKey()}</b>
       <small>다른 휴대폰이나 PC에서 이 열쇠를 넣으면 서랍이 그대로 열려요.</small>
-      <div class="keyrow"><input id="keyIn" placeholder="다른 기기의 열쇠 넣기"><button data-key>열기</button></div></div></details>
+      <div class="keyrow"><input id="keyIn" placeholder="다른 기기의 열쇠 넣기"><button data-key>열기</button></div></div></details>` : ""}
     ${foot()}</div>`;
 }
 function foot() {
