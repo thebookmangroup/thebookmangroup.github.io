@@ -2116,12 +2116,21 @@ function mediaInfo() {
   } catch (e) {
   }
 }
+function played() {
+  if (R.playedNo !== R.l?.no) {
+    R.playedNo = R.l?.no;
+    ev("play");
+  }
+}
 function startMusic() {
   setTimeout(mediaInfo, 0);
   if (!R.music || R.songOn) return;
   bgm.volume = 0;
   const p = bgm.play();
-  p && p.then(() => fadeTo(R.musicMode === "piano" ? 0.35 : 0.5, 2500)).catch(() => {
+  p && p.then(() => {
+    played();
+    fadeTo(R.musicMode === "piano" ? 0.35 : 0.5, 2500);
+  }).catch(() => {
   });
 }
 function openLetter(l) {
