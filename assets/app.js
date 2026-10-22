@@ -318,7 +318,7 @@ function coverHtml(b, big) {
   return `<div class="cover">${src ? `<img src="${esc(src)}" alt="${esc(title(b))}${LANG === "en" ? " — cover" : " 표지"}" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.remove()">` : ""}<div class="ph" aria-hidden="true" style="user-select:none">${esc(b.title)}</div>${b.pub > TODAY ? `<span class="badge">${t("soon")}</span>` : ""}</div>`;
 }
 const cardHtml = (b) => `<a class="card" href="#/book/${b.isbn}">${coverHtml(b).replace('<div class="cover">', `<div class="cover" data-go="${LANG === "en" ? "View book" : "책 보기"}">`)}<div class="t">${esc(title(b))}</div><div class="a">${esc(authorLine(b))}</div><div class="k">${esc(catName(b))}${soldMark(b) ? ` · <b class="sm">${esc(soldMark(b))}</b>` : ""}${SOLD[b.isbn] ? ` · <em>${t("soldIn")(SOLD[b.isbn].length)}</em>` : ""}</div></a>`;
-const auPh = (a) => `<div class="au-ph">${a.photo ? `<img src="authors/${a.id}.jpg" alt="" loading="lazy" onerror="this.remove()">` : esc((auName(a) || "?")[0])}</div>`;
+const auPh = (a) => `<div class="au-ph">${a.photo ? `<img src="authors/${a.id}.jpg?v=${PHOTO_V}" alt="" loading="lazy" onerror="this.remove()">` : esc((auName(a) || "?")[0])}</div>`;
 const auJob = (a) => {
   if (LANG !== "en") return (a.jobs || []).join(" · ");
   const f = (a.en_bio || "").split(". ")[0], j = f.replace(/^[^ ]+ [^ ]+ is (an? )?/, "");
@@ -838,7 +838,7 @@ function bookList(params, base, onlyOrig) {
     ${auHits.length ? `<div class="sauh${L.length ? "" : " nb"}"><div class="sauh-k">${LANG === "en" ? "Authors" : "작가"} <small>${auHits.length}</small></div><div class="apx">${auHits.slice(0, 6).map(auMini).join("")}</div>${auHits.length > 6 ? `<a class="link" href="#/authors">${LANG === "en" ? "All authors" : "모든 작가"} →</a>` : ""}</div>${L.length ? `<div class="sauh-k">${LANG === "en" ? "Books" : "책"} <small>${L.length}</small></div>` : ""}` : ""}
     ${L.length ? `<div class="grid">${L.map(cardHtml).join("")}</div>` : auHits.length ? "" : `<div class="empty">${t("empty")}</div>`}`;
 }
-const auMini = (x) => `<a class="apc" href="#/author/${x.id}"><div class="apc-ph">${x.photo ? `<img src="authors/${x.id}.jpg" alt="" loading="lazy" decoding="async" onerror="this.remove()">` : `<span>${esc((auName(x) || "?")[0])}</span>`}</div>
+const auMini = (x) => `<a class="apc" href="#/author/${x.id}"><div class="apc-ph">${x.photo ? `<img src="authors/${x.id}.jpg?v=${PHOTO_V}" alt="" loading="lazy" decoding="async" onerror="this.remove()">` : `<span>${esc((auName(x) || "?")[0])}</span>`}</div>
     <div class="apc-tx"><div class="apc-k"></div><div class="apc-n">${esc(auName(x))}</div><div class="apc-j">${esc(auJob(x)) || "&nbsp;"}</div><div class="apc-m">${t("vols")(auBooks(x).length)}</div></div><div class="apc-bk">${auBooks(x).slice(0, 3).map((b) => coverHtml(b)).join("")}</div></a>`;
 const brandName = (n) => LANG === "en" && typeof IMPRINT_EN !== "undefined" && IMPRINT_EN[n] || n;
 const IMPRINT_EN = { "북로망스": "Book Romance", "북플레저": "Book Pleasure", "북모먼트": "Book Moment", "북파머스": "Book Farmers", "머묾": "MEOMUM", "북크레용": "Book Crayon" };
@@ -1006,13 +1006,13 @@ const auKey = (a) => [a.name, a.en_name, (a.jobs || []).join(" "), ...auBooks(a)
 const talkMail = () => `mailto:${MAIL.main}?subject=${encodeURIComponent(LANG === "en" ? "[Talk request] " : "[강연 문의] ")}&body=${encodeURIComponent(LANG === "en" ? "Author:\nOrganization:\nPreferred date:\nLocation (online/offline):\nAudience & size:\nTopic:\nContact:\n" : "작가:\n기관/단체명:\n희망 날짜:\n장소(온라인/오프라인):\n대상과 인원:\n원하는 주제:\n담당자 연락처:\n")}`;
 const authorsPage = () => {
   const en = LANG === "en", ph = authorsRanked.filter((a) => a.photo), rest = authorsRanked.filter((a) => !a.photo);
-  const card = (a) => `<a class="apc" href="#/author/${a.id}" data-q="${esc(auKey(a))}"><div class="apc-ph"><img src="authors/${a.id}.jpg" alt="" loading="lazy" decoding="async" onerror="this.remove()"></div>
+  const card = (a) => `<a class="apc" href="#/author/${a.id}" data-q="${esc(auKey(a))}"><div class="apc-ph"><img src="authors/${a.id}.jpg?v=${PHOTO_V}" alt="" loading="lazy" decoding="async" onerror="this.remove()"></div>
       <div class="apc-tx"><div class="apc-k"></div><div class="apc-n">${esc(auName(a))}</div><div class="apc-j">${esc(auJob(a)) || "&nbsp;"}</div><div class="apc-m">${t("vols")(auBooks(a).length)}</div></div><div class="apc-bk">${auBooks(a).slice(0, 3).map((b) => coverHtml(b)).join("")}</div></a>`;
   const row = (a) => {
     const L = auBooks(a);
     return `<a class="arw" href="#/author/${a.id}" data-q="${esc(auKey(a))}"><b>${esc(auName(a))}</b><span>${esc(auJob(a))}</span><em>${t("vols")(L.length)}</em></a>`;
   };
-  const tile = (a, hide) => `<a class="aut" href="#/author/${a.id}"${hide ? ' tabindex="-1" aria-hidden="true"' : ""}><img src="authors/${a.id}.jpg" alt="" loading="lazy" decoding="async" onerror="this.remove()"><em>${esc(auName(a))}</em></a>`;
+  const tile = (a, hide) => `<a class="aut" href="#/author/${a.id}"${hide ? ' tabindex="-1" aria-hidden="true"' : ""}><img src="authors/${a.id}.jpg?v=${PHOTO_V}" alt="" loading="lazy" decoding="async" onerror="this.remove()"><em>${esc(auName(a))}</em></a>`;
   const mix = [...ph];
   for (let i = mix.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -1184,6 +1184,7 @@ Contact:
 `;
   return `mailto:${MAIL.main}?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent(body)}`;
 }
+const PHOTO_V = "20261022";
 const PHOTO_SRC = { provided: ["사진 제공: 작가", "Photo: courtesy of the author"], kyobo: ["사진 출처: 교보문고", "Photo: Kyobo Book Centre"], asiae: ["사진 출처: 아시아경제", "Photo: Asia Business Daily"], idaegu: ["사진 출처: 대구신문", "Photo: Daegu Shinmun"], naver: ["사진 출처: 네이버 인물정보", "Photo: Naver"], band: ["사진 출처: 책 표지·띠지", "Photo: book cover"], chesley: ["사진 출처: 체슬리투자자문", "Photo: Chesley Investment Advisory"], donga: ["사진 출처: 여성동아", "Photo: Woman Donga"], thek: ["사진 출처: 더케이 매거진", "Photo: The-K Magazine"], "3pro": ["사진 출처: 삼프로TV", "Photo: 3protv"], topclass: ["사진 출처: 톱클래스", "Photo: Topclass"], snu: ["사진 제공: 서울대학교", "Photo: Seoul National University"], korea: ["사진 출처: 고려대학교", "Photo: Korea University"], ummazing: ["사진 출처: 엄메이징HRD", "Photo: Ummazing HRD"], brunch: ["사진 출처: 작가 브런치", "Photo: author’s Brunch page"], sookmyung: ["사진 출처: 숙명여자대학교", "Photo: Sookmyung Women’s University"], insta: ["사진 출처: 작가 인스타그램", "Photo: author’s Instagram"] };
 const AUTHOR_NEWS = {
   "윤정은": {
@@ -1454,12 +1455,12 @@ function authorPage(id) {
   const myBr = new Set(L.map((b) => b.brand));
   const pool = authorsRanked.filter((x) => x.id !== a.id && x.photo && auBooks(x).length);
   const more = [...pool.filter((x) => auBooks(x).some((b) => myBr.has(b.brand))), ...pool.filter((x) => !auBooks(x).some((b) => myBr.has(b.brand)))].slice(0, 3);
-  const mini = (x) => `<a class="apc" href="#/author/${x.id}"><div class="apc-ph"><img src="authors/${x.id}.jpg" alt="" loading="lazy" decoding="async" onerror="this.remove()"></div>
+  const mini = (x) => `<a class="apc" href="#/author/${x.id}"><div class="apc-ph"><img src="authors/${x.id}.jpg?v=${PHOTO_V}" alt="" loading="lazy" decoding="async" onerror="this.remove()"></div>
       <div class="apc-tx"><div class="apc-k"></div><div class="apc-n">${esc(auName(x))}</div><div class="apc-j">${esc(auJob(x)) || "&nbsp;"}</div><div class="apc-m">${t("vols")(auBooks(x).length)}</div></div><div class="apc-bk">${auBooks(x).slice(0, 3).map((b) => coverHtml(b)).join("")}</div></a>`;
   return `<div class="wrap"><div class="adp-w">
       <div class="crumb"><a href="#/authors">${t("authors")}</a></div>
       <div class="adp-g"><div class="adp-main">
-      <div class="adp"><div class="adp-ph">${a.photo ? `<img src="authors/${a.id}.jpg" alt="" decoding="async" onload="if(this.naturalWidth<200)this.parentNode.classList.add('lo')" onerror="this.remove()">` : `<span>${esc((auName(a) || "?")[0])}</span>`}</div>
+      <div class="adp"><div class="adp-ph">${a.photo ? `<img src="authors/${a.id}.jpg?v=${PHOTO_V}" alt="" decoding="async" onload="if(this.naturalWidth<200)this.parentNode.classList.add('lo')" onerror="this.remove()">` : `<span>${esc((auName(a) || "?")[0])}</span>`}</div>
         <div class="adp-tx"><div class="kicker">${esc(LANG === "ko" ? (a.jobs || []).join(" · ") : "") || "Author"}</div><h1>${esc(auName(a))}</h1>${en ? `<div class="ko">${esc(a.name)}</div>` : ""}
           <div class="adp-m">${t("vols")(L.length)}${brands ? " · " + esc(brands) : ""}</div></div>
         <a class="btn ink adp-b" href="${lectureMail(a)}">${t("talk")} →</a></div>
