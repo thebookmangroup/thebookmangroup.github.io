@@ -262,6 +262,9 @@ header {
   position: relative;
   z-index: 1;
 }
+.cover img + .ph {
+  visibility: hidden;
+}
 .cover .ph {
   position: absolute;
   inset: 0;

@@ -314,8 +314,10 @@ function stores(b) {
 }
 function coverHtml(b, big) {
   let src = (b.cover || "").replace("cover200", "cover500");
-  if (!big && /^covers\//.test(src)) src = src.replace(/^covers\/(.+)\.\w+$/, "covers/s/$1.webp");
-  return `<div class="cover">${src ? `<img src="${esc(src)}" alt="${esc(title(b))}${LANG === "en" ? " — cover" : " 표지"}" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.remove()">` : ""}<div class="ph" aria-hidden="true" style="user-select:none">${esc(b.title)}</div>${b.pub > TODAY ? `<span class="badge">${t("soon")}</span>` : ""}</div>`;
+  const small = /^covers\//.test(src) ? src.replace(/^covers\/(.+)\.\w+$/, "covers/s/$1.webp") : "";
+  if (!big && small) src = small;
+  const under = big && small ? ` style="background:url('${esc(small)}') center/cover no-repeat"` : "";
+  return `<div class="cover">${src ? `<img src="${esc(src)}"${under} alt="${esc(title(b))}${LANG === "en" ? " — cover" : " 표지"}" loading="${big ? "eager" : "lazy"}"${big ? ' fetchpriority="high"' : ""} decoding="async" referrerpolicy="no-referrer" onerror="this.remove()">` : ""}<div class="ph" aria-hidden="true" style="user-select:none">${esc(b.title)}</div>${b.pub > TODAY ? `<span class="badge">${t("soon")}</span>` : ""}</div>`;
 }
 const cardHtml = (b) => `<a class="card" href="#/book/${b.isbn}">${coverHtml(b).replace('<div class="cover">', `<div class="cover" data-go="${LANG === "en" ? "View book" : "책 보기"}">`)}<div class="t">${esc(title(b))}</div><div class="a">${esc(authorLine(b))}</div><div class="k">${esc(catName(b))}${soldMark(b) ? ` · <b class="sm">${esc(soldMark(b))}</b>` : ""}${SOLD[b.isbn] ? ` · <em>${t("soldIn")(SOLD[b.isbn].length)}</em>` : ""}</div></a>`;
 const auPh = (a) => `<div class="au-ph">${a.photo ? `<img src="authors/${a.id}.jpg?v=${PHOTO_V}" alt="" loading="lazy" onerror="this.remove()">` : esc((auName(a) || "?")[0])}</div>`;
