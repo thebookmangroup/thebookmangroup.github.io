@@ -2914,6 +2914,41 @@ footer {
   color: var(--t4);
   margin-top: 14px;
 }
+.job {
+  border: 1px solid var(--rule);
+  padding: 32px 32px 8px;
+  margin-bottom: 24px;
+}
+.job .job-t {
+  font-size: 20px;
+  letter-spacing: -.02em;
+  color: var(--t1,#262624);
+  margin-bottom: 6px;
+}
+.job .job-m {
+  font-size: 13px;
+  color: var(--t4);
+  margin-bottom: 22px;
+}
+.job h3 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 22px 0 8px;
+  color: var(--t1,#262624);
+}
+.job .doc-sec li,
+.job li {
+  grid-template-columns: 18px minmax(0, 1fr);
+}
+.job li i {
+  font-style: normal;
+  color: var(--accent);
+}
+@media (max-width: 860px) {
+  .job {
+    padding: 24px 20px 4px;
+  }
+}
 .doc-sec .btn {
   margin-top: 22px;
 }

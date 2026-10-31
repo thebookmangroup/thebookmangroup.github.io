@@ -1695,6 +1695,16 @@ function permissionsPage() {
   );
 }
 const JOBS = [];
+const jobCard = (j) => {
+  const li = (a) => `<ul>${a.map((x) => `<li><i>·</i><span>${esc(x)}</span></li>`).join("")}</ul>`;
+  const mail = `mailto:${MAIL.jobs}?subject=${encodeURIComponent(j.subject || "[입사 지원] ")}`;
+  return `<div class="job"><div class="job-t">${esc(j.t)}</div><div class="job-m">${[j.type, j.due ? `마감 ${j.due}` : "채용 시 마감"].filter(Boolean).map(esc).join(" · ")}</div>
+    ${(j.secs || []).map(([h, b]) => `<h3>${esc(h)}</h3>${Array.isArray(b) ? li(b) : `<p>${esc(b)}</p>`}`).join("")}
+    ${j.body ? `<p>${esc(j.body)}</p>` : ""}
+    <h3>지원 방법</h3><p><b>${MAIL.jobs}</b> 으로 보내 주세요. 메일 제목: <b>${esc(j.subject || "[입사 지원] 지원 분야")}</b></p>
+    <p style="margin:14px 0 24px"><a class="btn ink" href="${mail}">이 자리에 지원하기</a></p>
+    ${j.note ? `<p class="note" style="margin-bottom:24px">${esc(j.note)}</p>` : ""}</div>`;
+};
 const VALUES = () => LANG === "en" ? [
   ["People come first", "However urgent the work, one careless word can change the mood of a team. We point out problems, never people."],
   ["We respond first", "We say hello first and reply first. Even a short “Got it” is where trust begins."],
@@ -1728,7 +1738,8 @@ const peopleText = () => LANG === "en" ? '<p>Making things and sharing them are,
 function careersPage() {
   const en = LANG === "en";
   const mail = `mailto:${MAIL.jobs}?subject=${encodeURIComponent("[입사 지원] 지원 분야: ")}&body=${encodeURIComponent("지원 분야:\n이름:\n연락처:\n\n(이력서와 포트폴리오를 붙여 보내 주세요)")}`;
-  const open = JOBS.filter((j) => !j.due || j.due >= TODAY);
+  const isDraft = /homepage-draft/.test(location.pathname);
+  const open = JOBS.filter((j) => (!j.draft || isDraft) && (!j.due || j.due >= TODAY));
   return docPage(
     "",
     en ? "Careers" : "채용 안내",
@@ -1736,7 +1747,7 @@ function careersPage() {
     [
       { h: en ? "It all comes down to people" : "사람이 하는 일입니다", body: peopleText() },
       { h: en ? "How we work together" : "우리가 일하는 문화", body: perksList() },
-      { h: en ? "Open positions" : "지금 모집 중", body: open.length ? ol(open.map((j) => `<b>${esc(j.t)}</b>${j.type ? ` · ${esc(j.type)}` : ""}${j.due ? ` · ${en ? "until" : "마감"} ${esc(j.due)}` : ""}${j.body ? `<br>${esc(j.body)}` : ""}`)) : `<p>${en ? "There are no open positions right now. New openings will be posted on this page." : "지금은 진행 중인 채용이 없습니다. 새 공고가 열리면 이 페이지에 올립니다."}</p>` },
+      { h: en ? "Open positions" : "지금 모집 중", body: open.length ? open.map(jobCard).join("") : `<p>${en ? "There are no open positions right now. New openings will be posted on this page." : "지금은 진행 중인 채용이 없습니다. 새 공고가 열리면 이 페이지에 올립니다."}</p>` },
       { h: en ? "How to apply" : "지원 방법", body: `<p>${en ? "Email your CV (and portfolio, if any) to" : "이력서(포트폴리오가 있으면 함께)를 메일로 보내 주세요."} <b>${MAIL.jobs}</b></p><a class="btn ink" href="${mail}">${en ? "Email your application" : "지원 메일 쓰기"}</a>` },
       { h: en ? "Freelance partners" : "함께 일할 외부 파트너", body: `<p>${en ? "We also work with freelance translators, designers and proofreaders. Send a short introduction and samples." : "번역, 디자인, 교정·교열을 함께할 외부 파트너도 찾습니다. 간단한 소개와 작업 샘플을 보내 주세요."}</p>` }
     ]
