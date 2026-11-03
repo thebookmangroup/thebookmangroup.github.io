@@ -2243,7 +2243,7 @@ function openLetter(l) {
   $("#startHint").style.opacity = 1;
   setTimeout(() => $("#startHint").style.opacity = 0, 5e3);
   $("#bSong").style.display = l.own ? "none" : "";
-  applyMusic("song", true);
+  applyMusic("piano", true);
   setMode(R.mode, true);
   markSaved();
   wake(5e3);
@@ -2470,7 +2470,7 @@ function finish() {
     <div class="done">${ic("check")}</div>
     <h3>${first ? "편지를 다 읽었어요" : "다시 읽어 주셔서 고마워요"}</h3>
     <p class="sub">No.${l.no} ${esc(l.title)} · 지금까지 ${s.length}통</p>
-    ${l.own ? `<div class="li" style="margin-top:22px;border-radius:14px;background:var(--s1)"><span class="ic">${ic("note")}</span><div><b>${esc(l.own[0].name)}</b><small>편지와 함께 흐른 노래 · 책 읽어주는 남자가 만들었어요</small></div><button class="pill" data-replay>처음부터</button></div>` : ""}
+    ${l.own ? `<div class="li" style="margin-top:22px;border-radius:14px;background:var(--s1)"><span class="ic">${ic("note")}</span><div><b>${esc(l.own[0].name)}</b><small>이 편지의 노래 · 책 읽어주는 남자가 만들었어요</small></div><button class="pill" data-replay>듣기</button></div>` : ""}
     <h4>응원 한마디</h4>
     <div class="cmt-w"><textarea id="cmT" maxlength="120" rows="2" placeholder="이 편지를 읽은 마음을 한 줄로 남겨 주세요"></textarea>
       <div class="cmt-row"><input id="cmN" maxlength="12" placeholder="이름 (안 써도 돼요)"><button class="cmt-go" data-cmt="${l.no}">남기기</button></div></div>
@@ -2953,7 +2953,7 @@ $("#sheetBg").onclick = () => {
 };
 $("#bClose").onclick = () => closeLetter();
 $("#bHeart").onclick = () => like();
-const MUSIC = [["song", "노래"], ["piano", "피아노"], ["mute", "무음"]];
+const MUSIC = [["piano", "피아노"], ["song", "노래"], ["mute", "무음"]];
 const PL = { ko: [], en: [] };
 (window.__POOL || []).forEach((x) => {
   if (!x.replaced && (x.ok || (window.__REV?.songs || {})[x.id]?.status === "ok")) PL[x.lang === "en" ? "en" : "ko"].push(x);
