@@ -1342,6 +1342,210 @@ header {
     columns: 1;
   }
 }
+.rx-lead {
+  font-family: var(--serif);
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.5;
+  letter-spacing: -.02em;
+  color: var(--ink);
+  margin: 0 0 28px;
+  white-space: pre-line;
+}
+.rx-pts {
+  list-style: none;
+  margin: 0 0 36px;
+  padding: 0;
+  border-top: 1px solid var(--ink);
+}
+.rx-pts li {
+  display: flex;
+  gap: 14px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--rule);
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--ink);
+}
+.rx-pts li span {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  color: var(--t4);
+  padding-top: 4px;
+  min-width: 20px;
+}
+.rx-p {
+  font-size: 17px;
+  line-height: 1.95;
+  color: var(--t2);
+  margin: 0 0 20px;
+}
+.rx-p.q {
+  font-family: var(--serif);
+  color: var(--ink);
+}
+.rx-h {
+  font-family: var(--serif);
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--ink);
+  margin: 40px 0 16px;
+  letter-spacing: -.01em;
+}
+.rx-fold {
+  position: relative;
+}
+.rx-fold.closed .rx-more {
+  max-height: 520px;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(#000 60%, transparent);
+  mask-image: linear-gradient(#000 60%, transparent);
+}
+.rx-open {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  height: 44px;
+  padding: 0 20px;
+  border: 1px solid var(--ink);
+  border-radius: 999px;
+  background: none;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+  cursor: pointer;
+}
+.rx-open:hover {
+  background: var(--ink);
+  color: #fff;
+}
+.rx-fold:not(.closed) .rx-open {
+  display: none;
+}
+.rx-quote {
+  margin: 0 0 40px;
+  padding: 44px 40px;
+  background: var(--mist);
+  border-radius: 4px;
+  position: relative;
+}
+.rx-quote::before {
+  content: "“";
+  position: absolute;
+  top: 8px;
+  left: 28px;
+  font-family: var(--serif);
+  font-size: 72px;
+  line-height: 1;
+  color: var(--t4);
+}
+.rx-quote p {
+  font-family: "Noto Serif KR", serif;
+  font-size: 21px;
+  line-height: 1.8;
+  color: var(--ink);
+  margin: 0;
+  white-space: pre-line;
+}
+.rx-quote cite {
+  display: block;
+  margin-top: 18px;
+  font-style: normal;
+  font-size: 12px;
+  letter-spacing: .12em;
+  color: var(--t3);
+}
+.rx-qs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+.rx-qs figure {
+  margin: 0;
+  padding: 24px 0;
+  border-top: 1px solid var(--ink);
+}
+.rx-qs p {
+  font-family: "Noto Serif KR", serif;
+  font-size: 15px;
+  line-height: 1.9;
+  color: var(--t2);
+  margin: 0;
+  white-space: pre-line;
+}
+.rx-qs cite {
+  display: block;
+  margin-top: 12px;
+  font-style: normal;
+  font-size: 12px;
+  color: var(--t4);
+}
+.rx-au {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr);
+  gap: 20px;
+  padding: 24px 0;
+  border-top: 1px solid var(--rule);
+}
+.rx-au:first-of-type {
+  border-top: 1px solid var(--ink);
+}
+.rx-au .r {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .14em;
+  color: var(--t4);
+  padding-top: 5px;
+}
+.rx-au .n {
+  font-family: var(--serif);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--ink);
+}
+.rx-au .n a {
+  border-bottom: 1px solid var(--rule);
+}
+.rx-au .n a:hover {
+  border-color: var(--ink);
+}
+.rx-au .b {
+  font-size: 15px;
+  line-height: 1.85;
+  color: var(--t2);
+  margin-top: 8px;
+  white-space: pre-line;
+}
+.rx-src {
+  margin-top: 40px;
+  font-size: 12px;
+  color: var(--t4);
+}
+@media (max-width: 760px) {
+  .rx-lead {
+    font-size: 21px;
+  }
+  .rx-quote {
+    padding: 36px 22px;
+  }
+  .rx-quote p {
+    font-size: 18px;
+  }
+  .rx-qs {
+    grid-template-columns: 1fr;
+  }
+  .rx-au {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+  .rx-p {
+    font-size: 16px;
+  }
+}
 .prev {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(130px, 150px));

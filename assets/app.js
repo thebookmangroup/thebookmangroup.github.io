@@ -914,7 +914,7 @@ function introHtml(b) {
     ${p.quote.length ? `<div class="blk"><h3>책 속에서</h3><div class="bq">${p.quote.map((q) => `<p>${esc(q)}</p>`).join("")}</div></div>` : ""}
     ${!rec.length ? praiseHtml(b) : ""}
     ${rec.length ? `<div class="blk"><h3>추천의 말</h3><div class="rec">${rec.map((r) => `<figure><blockquote>${esc(r.q)}</blockquote>${r.by ? `<figcaption>${esc(r.by)}</figcaption>` : ""}</figure>`).join("")}</div></div>` : ""}
-    ${p.toc.length ? `<div class="blk"><details class="toc"><summary><h3>목차 <span>${p.toc.length}</span></h3><i></i></summary><ol>${p.toc.map((x) => `<li>${esc(x)}</li>`).join("")}</ol></details></div>` : ""}`;
+    ${p.toc.length ? `<div class="blk"><details class="toc"><summary><h3>목차</h3><i></i></summary><ol>${p.toc.slice(0, 8).map((x) => `<li>${esc(x)}</li>`).join("")}</ol></details></div>` : ""}`;
 }
 function prevHtml(list) {
   if (!list || !list.length) return "";
@@ -922,6 +922,79 @@ function prevHtml(list) {
     const inner = `<div class="pv-c"><img src="${e.img}" alt="" loading="lazy"></div><div class="pv-t">${esc(LANG === "en" ? e.en || "" : e.t)}</div><div class="pv-y">${LANG === "en" ? e.y + " edition" : e.y + "년 판"}</div>`;
     return e.id ? `<a class="pv" href="https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=${e.id}" target="_blank" rel="noopener">${inner}</a>` : `<div class="pv">${inner}</div>`;
   }).join("")}</div>`;
+}
+const DETAIL = {};
+function rxFold(inner, label, limit) {
+  return `<div class="rx-fold${limit ? " closed" : ""}"><div class="rx-more">${inner}</div>${limit ? `<button type="button" class="rx-open" onclick="this.parentNode.classList.remove('closed')">${label} <span>↓</span></button>` : ""}</div>`;
+}
+function rxParas(lines) {
+  return lines.map((l) => {
+    const short = l.length <= 48 && !/[.。다요]$/.test(l.replace(/[”"’\s]+$/, ""));
+    if (/^[★☆■●◆▶※]/.test(l) || short && l.length >= 6) return `<h4 class="rx-h">${esc(l.replace(/^[★☆■●◆▶※\s]+|[\s★☆]+$/g, ""))}</h4>`;
+    return `<p class="rx-p${/^[“"]/.test(l) ? " q" : ""}">${esc(l)}</p>`;
+  }).join("");
+}
+function rxIntro(lines) {
+  const lead = [], pts = [];
+  let i = 0;
+  for (; i < lines.length; i++) {
+    const l = lines[i];
+    if (/^[★☆■●◆▶]/.test(l)) {
+      pts.push(l.replace(/^[★☆■●◆▶\s]+|[\s★☆]+$/g, ""));
+      continue;
+    }
+    if (l.length <= 60 && !pts.length && lead.length < 3) {
+      lead.push(l);
+      continue;
+    }
+    break;
+  }
+  const body = lines.slice(i), len = body.join("").length;
+  return `${lead.length ? `<p class="rx-lead">${esc(lead.join("\n"))}</p>` : ""}
+    ${pts.length ? `<ol class="rx-pts">${pts.map((p, k) => `<li><span>${String(k + 1).padStart(2, "0")}</span>${esc(p)}</li>`).join("")}</ol>` : ""}
+    ${rxFold(rxParas(body), "책 소개 더 읽기", len > 900)}`;
+}
+function richHtml(b, d) {
+  const old = introParts(b.intro);
+  const au = bookAuthors(b);
+  const intro = d.intro && d.intro.length ? d.intro : old.about.length ? old.about : [b.desc || ""];
+  const qs = d.quotes && d.quotes.length ? d.quotes : old.quote.map((q) => ({ q, p: "" }));
+  const rec = d.praise && d.praise.length ? d.praise : old.rec.map((l) => {
+    const m = l.match(/^(.*?)\s+-\s+([^-]{2,40})$/);
+    return m ? { q: m[1], by: m[2] } : { q: l, by: "" };
+  });
+  const tocAll = d.toc && d.toc.length ? d.toc : old.toc;
+  const tocHead = tocAll.filter((l) => /^(제?\s*\d+\s*(부|장|교시|강|막)|PART|Part|CHAPTER|Chapter|[IVX]+\.|[一二三四五六七八九十]+[부장])/.test(l));
+  const toc = (tocHead.length >= 2 ? tocHead : tocAll).slice(0, 8);
+  const rv = (d.review || []).filter((l) => !intro.includes(l));
+  const auHtml = (d.authors || []).map((a) => {
+    const hit = au.find((x) => a.name.replace(/\s/g, "").includes(auName(x).replace(/\s/g, "")));
+    const role = { 지은이: "지은이", 옮긴이: "옮긴이", 그림: "그림", 엮은이: "엮은이", 감수: "감수" }[a.role] || a.role;
+    return `<div class="rx-au"><div class="r">${esc(role)}</div><div><div class="n">${hit ? `<a href="#/author/${hit.id}">${esc(a.name)}</a>` : esc(a.name)}</div><div class="b">${esc(a.bio.length > 700 ? a.bio.slice(0, a.bio.lastIndexOf(".", 700) + 1 || 700) : a.bio)}</div></div></div>`;
+  }).join("");
+  return `<h3>${t("about_")}</h3>${rxIntro(intro)}
+    ${qs.length ? `<div class="blk"><h3>책 속에서</h3><figure class="rx-quote"><p>${esc(qs[0].q)}</p>${qs[0].p ? `<cite>${esc(qs[0].p)}</cite>` : ""}</figure>
+      ${qs.length > 1 ? `<div class="rx-qs">${qs.slice(1, 3).map((x) => `<figure><p>${esc(x.q)}</p>${x.p ? `<cite>${esc(x.p)}</cite>` : ""}</figure>`).join("")}</div>` : ""}</div>` : ""}
+    ${rv.length ? `<div class="blk"><h3>출판사 리뷰</h3>${rxFold(rxParas(rv), "출판사 리뷰 전체 읽기", rv.join("").length > 900)}</div>` : ""}
+    ${rec.length ? `<div class="blk"><h3>추천의 말</h3><div class="rec">${rec.map((r) => `<figure><blockquote>${esc(r.q)}</blockquote>${r.by ? `<figcaption>${esc(r.by)}</figcaption>` : ""}</figure>`).join("")}</div></div>` : praiseHtml(b)}
+    ${toc.length ? `<div class="blk"><details class="toc"><summary><h3>목차${tocAll.length > toc.length ? " <span>큰 줄기만</span>" : ""}</h3><i></i></summary><ol>${toc.map((x) => `<li>${esc(x)}</li>`).join("")}</ol></details></div>` : ""}
+    ${auHtml ? `<div class="blk"><h3>지은이·옮긴이</h3>${auHtml}</div>` : ""}`;
+}
+function loadDetail(isbn) {
+  if (LANG === "en") return;
+  const put = (d) => {
+    const el = document.getElementById("bk-rich");
+    if (!el || el.dataset.isbn !== isbn || !d || !(d.intro && d.intro.length || d.review && d.review.length)) return;
+    el.innerHTML = richHtml(byIsbn[isbn], d);
+    el.classList.add("rich");
+  };
+  if (isbn in DETAIL) return put(DETAIL[isbn]);
+  fetch(`details/${isbn}.json`, { cache: "no-cache" }).then((r) => r.ok ? r.json() : null).then((d) => {
+    DETAIL[isbn] = d;
+    put(d);
+  }).catch(() => {
+    DETAIL[isbn] = null;
+  });
 }
 function book(isbn) {
   const b = byIsbn[isbn];
@@ -932,11 +1005,12 @@ function book(isbn) {
   const en = LANG === "en" && b.en;
   const mailto = `mailto:${MAIL.rights}?subject=${encodeURIComponent(`[Rights] ${b.en?.en_title || b.title} (${b.title}, ISBN ${b.isbn})`)}`;
   const sold = SOLD[b.isbn];
+  setTimeout(() => loadDetail(b.isbn), 0);
   return `<div class="wrap"><div class="bk">
     <div>
       <div class="bk-cover" style="${tintBg(b, 30)}">${coverHtml(b, true).replace('<div class="cover">', '<div class="cover bk3d"><i class="bk-spine"></i><i class="bk-glare"></i>')}${SOLD[b.isbn] ? `<div class="bk-tag">${LANG === "en" ? `Licensed in ${SOLD[b.isbn].length} ${SOLD[b.isbn].length === 1 ? "country" : "countries"}` : `${SOLD[b.isbn].length}개 나라 판권 계약`}</div>` : ""}</div>
       <div class="bk-body">
-        ${en ? `<h3>${t("about_")}</h3><div class="desc">${esc(b.en.en_pitch)}</div>${praiseHtml(b)}` : introHtml(b)}
+        ${en ? `<h3>${t("about_")}</h3><div class="desc">${esc(b.en.en_pitch)}</div>${praiseHtml(b)}` : `<div id="bk-rich" data-isbn="${b.isbn}">${introHtml(b)}</div>`}
         ${oneBookHtml([b.isbn], false)}
         ${PREV[b.isbn] ? `<div class="blk"><h3>${LANG === "en" ? "Earlier editions" : "이전 판"}</h3>${prevHtml(PREV[b.isbn])}</div>` : ""}
         ${GOODS[b.isbn] ? `<div class="blk"><h3>${LANG === "en" ? "Made with ILLUSIEN" : "일루지앵과 함께 만든 물건"}</h3><div class="goods">${GOODS[b.isbn].map((g) => `<a href="${g.url}" target="_blank" rel="noopener">${esc(LANG === "en" ? g.en : g.t)}<span>↗</span></a>`).join("")}</div><p class="goods-n">${LANG === "en" ? "ILLUSIEN is the lifestyle brand of The Book Man Group." : "일루지앵은 책 읽어주는 남자 그룹의 라이프스타일 브랜드입니다."}</p></div>` : ""}
