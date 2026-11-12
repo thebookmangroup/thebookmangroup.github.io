@@ -340,6 +340,297 @@ const catKeys = () => Object.keys(CAT).filter((k) => BOOKS.some((b) => b.ck === 
 const secHd = (k, h, p, right) => `<div class="sec-hd"><div><div class="kicker">${k}</div><h2>${h}</h2>${p ? `<p>${p}</p>` : ""}</div>${right || ""}</div>`;
 const MOBILE_SERIES = ["meomum", "philo", "first", "money"];
 const PC_SERIES = ["meomum", "money", "philo", "first", "why", "samguk"];
+let SC = null;
+function sceneHtml() {
+  return `<div class="sc" id="sc"><div class="case" id="sc-case" aria-label="${LANG === "en" ? "Bookshelf" : "책장"}"></div><div class="sc-op" id="sc-op"><div class="dim"></div></div></div>`;
+}
+function scCover(b) {
+  return (b.cover || "").replace("cover200", "cover500");
+}
+function scNight() {
+}
+function sceneInit() {
+  clearInterval(window.__scT);
+  window.removeEventListener("resize", window.__scR || (() => {
+  }));
+  const sec = $("#sc");
+  if (!sec) return;
+  scNight();
+  if (!window.__scNO) {
+    window.__scNO = new MutationObserver(scNight);
+    window.__scNO.observe(document.body, { attributes: true, attributeFilter: ["class"] });
+  }
+  const go = (SP) => {
+    SC = {
+      sec,
+      SP,
+      pool: sorted.filter((b) => b.pub <= TODAY && b.cover && SP[b.isbn]),
+      ratio: {},
+      rows: [],
+      hold: 0,
+      turn: 0,
+      open: null,
+      hoverDev: matchMedia("(hover: hover) and (pointer: fine)").matches
+    };
+    if (!SC.pool.length) return;
+    scBuild();
+    SC.pool.slice(0, 80).forEach((b) => {
+      const im = new Image();
+      im.referrerPolicy = "no-referrer";
+      im.onload = () => {
+        if (!SC) return;
+        SC.ratio[b.isbn] = im.naturalWidth / im.naturalHeight;
+        sec.querySelectorAll(`.bk3[data-isbn="${b.isbn}"]`).forEach((el) => el.style.setProperty("--w", parseFloat(el.style.getPropertyValue("--h")) * Math.min(SC.capR, SC.ratio[b.isbn]) + "px"));
+      };
+      im.src = scCover(b);
+    });
+    if (!matchMedia("(prefers-reduced-motion: reduce)").matches)
+      window.__scT = setInterval(() => {
+        if (!SC || SC.open || SC.hover || document.hidden || Date.now() - SC.hold < 6e3 || !document.body.contains(SC.sec)) return;
+        const r = SC.rows[SC.turn++ % SC.rows.length];
+        scSet(r, (r.cur + 1) % r.books.length);
+      }, 1700);
+    let rt = 0;
+    window.__scR = () => {
+      clearTimeout(rt);
+      rt = setTimeout(() => {
+        if (!SC) return;
+        if (SC.open) scClose(true);
+        scBuild();
+      }, 200);
+    };
+    window.addEventListener("resize", window.__scR);
+  };
+  if (window.__SP) go(window.__SP);
+  else fetch("spines/index.json?v=" + TODAY).then((r) => r.json()).then((j) => {
+    window.__SP = j;
+    go(j);
+  }).catch(() => {
+  });
+}
+function scBuild() {
+  const cs = $("#sc-case");
+  if (!cs || !SC) return;
+  cs.style.width = "";
+  const CW = cs.clientWidth, mob = CW < 700, fr = mob ? 10 : 14;
+  const inner = CW - fr * 2 - 2, capR = 0.72;
+  const L = SC.pool.slice(0, mob ? 14 : 20);
+  let bh = mob ? Math.min(240, Math.max(190, innerHeight * 0.3)) : 300;
+  const dOf = (b) => Math.max(9, bh * (SC.SP[b.isbn] || 0.07) * 1.05) + 2;
+  const pad = () => bh * 0.2;
+  if (!mob) for (let k = 0; k < 3; k++) {
+    const tt = L.reduce((t2, b) => t2 + dOf(b), 0) + bh * (capR + 0.2) + pad() * 2;
+    if (tt > inner) bh = bh * inner / tt;
+  }
+  const gap = Math.round(bh * 0.13), slot = bh * capR + bh * 0.2;
+  SC.capR = capR;
+  SC.bh = bh;
+  SC.mob = mob;
+  const books = [];
+  L.forEach((b, i) => {
+    if (i % 2) books.push(b);
+    else books.unshift(b);
+  });
+  const rows = [{ books, cur: books.indexOf(L[0]), ws: books.map(dOf), slot }];
+  if (!mob) cs.style.width = Math.ceil(rows[0].ws.reduce((a, w) => a + w, 0) + slot + pad() * 2 + fr * 2 + 2) + "px";
+  cs.style.setProperty("--fr", fr + "px");
+  cs.classList.toggle("mob", mob);
+  cs.innerHTML = `<div class="case-in"><div class="board top"></div>${rows.map((r, ri) => `<div class="cell" style="--h:${bh}px;--gap:${gap}px"><div class="row" data-r="${ri}">${r.books.map((b, i) => {
+    const w = bh * Math.min(capR, SC.ratio[b.isbn] || 0.68), d = r.ws[i] - 2;
+    return `<button class="bk3" data-i="${i}" data-isbn="${b.isbn}" style="--h:${bh}px;--w:${w}px;--d:${d}px" aria-label="${esc(title(b))}"><span class="bk3-box"><i class="f" style="background-image:url('${esc(scCover(b))}')"></i><i class="s" style="background-image:url('spines/${b.isbn}.webp')"></i><i class="p"></i><i class="tp"></i></span><span class="bk3-sh"></span></button>`;
+  }).join("")}</div></div><div class="board"></div>`).join("")}</div>`;
+  SC.rows = rows.map((r, ri) => {
+    const el = cs.querySelector(`.row[data-r="${ri}"]`);
+    const R = { ...r, el, els: [...el.children], mv: null };
+    R.els.forEach((b) => b.onclick = () => {
+      const i = +b.dataset.i;
+      SC.hold = Date.now();
+      if (i === R.cur) scOpen(R, i);
+      else scSet(R, i);
+    });
+    el.onmouseenter = () => {
+      SC.hover = true;
+    };
+    el.onmouseleave = () => {
+      SC.hover = false;
+      SC.hold = Date.now();
+      el.classList.remove("fast");
+    };
+    if (SC.hoverDev) el.onmousemove = (e) => {
+      if (!SC || SC.open) return;
+      const rc = el.getBoundingClientRect(), n = R.books.length;
+      const i = Math.max(0, Math.min(n - 1, Math.floor((e.clientX - rc.left) / rc.width * n)));
+      if (i !== R.cur) {
+        el.classList.add("fast");
+        scSet(R, i);
+      }
+    };
+    return R;
+  });
+  SC.rows.forEach((R) => scSet(R, R.cur, true));
+  requestAnimationFrame(() => cs.classList.add("ready"));
+}
+function scSet(R, i, instant) {
+  if (!SC || !R) return;
+  const prev = R.cur;
+  R.cur = i;
+  R.els.forEach((el, j) => el.classList.toggle("on", j === i));
+  const ws = R.ws.map((w, j) => j === i ? w + R.slot : w);
+  let x = 0, at = 0;
+  const tl = [];
+  ws.forEach((w, j) => {
+    tl.push(x);
+    if (j === i) at = x + w / 2;
+    x += w;
+  });
+  const total = x, CW = R.el.parentElement.clientWidth;
+  R.el.style.width = total + "px";
+  let off = -total / 2;
+  if (SC.mob && total > CW - 8) {
+    const lim = (total - CW) / 2 + 4;
+    off = Math.max(-total / 2 - lim, Math.min(-total / 2 + lim, -at));
+  }
+  R.el.style.transition = instant || !SC.mob ? "none" : "transform .6s cubic-bezier(.3,.7,.2,1)";
+  R.el.style.transform = `translateX(${off}px)`;
+  scMove(R, tl, ws, instant);
+}
+function scMove(R, tl, tw, instant) {
+  const A = R.mv || (R.mv = { l: [], w: [], raf: 0, t: 0 });
+  A.tl = tl;
+  A.tw = tw;
+  const paint = () => R.els.forEach((el, j) => {
+    el.style.left = A.l[j] + "px";
+    el.style.width = A.w[j] + "px";
+  });
+  if (instant || !A.l.length) {
+    cancelAnimationFrame(A.raf);
+    A.raf = 0;
+    A.l = tl.slice();
+    A.w = tw.slice();
+    paint();
+    return;
+  }
+  if (A.raf) return;
+  A.t = performance.now();
+  const step = (now) => {
+    const dt = Math.min(64, now - A.t);
+    A.t = now;
+    const k = 1 - Math.exp(-dt / (R.el.classList.contains("fast") ? 75 : 190));
+    let moving = false;
+    for (let j = 0; j < A.l.length; j++) {
+      const dl = A.tl[j] - A.l[j], dw = A.tw[j] - A.w[j];
+      A.l[j] += dl * k;
+      A.w[j] += dw * k;
+      if (Math.abs(dl) > 0.3 || Math.abs(dw) > 0.3) moving = true;
+    }
+    if (!moving) {
+      A.l = A.tl.slice();
+      A.w = A.tw.slice();
+    }
+    paint();
+    A.raf = moving && document.body.contains(R.el) ? requestAnimationFrame(step) : 0;
+  };
+  A.raf = requestAnimationFrame(step);
+}
+async function scOpen(R, i) {
+  if (!SC || SC.open) return;
+  const b = R.books[i], el = R.els[i], op = $("#sc-op"), sec = SC.sec;
+  const box = el.querySelector(".f").getBoundingClientRect(), sr = { left: 0, top: 0 };
+  document.documentElement.style.overflow = "hidden";
+  const W = innerWidth, H = innerHeight, r = Math.min(SC.capR, SC.ratio[b.isbn] || 0.68), mob = W < 760;
+  let ph, pw, L, T2;
+  if (mob) {
+    ph = Math.min(H * 0.36, 300);
+    pw = ph * r;
+    L = (W - pw) / 2;
+    T2 = 28;
+  } else {
+    ph = Math.min(H * 0.66, 520);
+    pw = ph * r;
+    const tot = pw + 72 + 400;
+    L = Math.max(32, (W - tot) / 2);
+    T2 = (H - ph) / 2;
+  }
+  let q = null, intro = [];
+  try {
+    const d = await (await fetch("details/" + b.isbn + ".json")).json();
+    q = (d.quotes || []).find((x2) => x2 && x2.q && x2.q.length >= 14 && x2.q.length <= 150) || null;
+    intro = d.intro || [];
+  } catch (e) {
+  }
+  const sent = (t2) => (String(t2 || "").replace(/\s+/g, " ").trim().match(/^.{12,110}?(다|요)[.!?]/) || [])[0] || "";
+  const why = LANG === "en" && b.en ? b.en.en_tagline || "" : sent(b.desc) || sent(intro.find((x2) => sent(x2) && !/^[★☆※■●◆]/.test(x2))) || "";
+  const st = stores(b), buy = st.find((s) => /교보|Kyobo/.test(s.name)) || st[0];
+  const sp = document.createElement("div");
+  sp.className = "sp";
+  sp.style.cssText = `left:${L}px;top:${T2}px;width:${pw}px;height:${ph}px;background-image:url('${esc(scCover(b))}')`;
+  const card = document.createElement("div");
+  card.className = "sc-card";
+  const brand = b.brand && LANG !== "en" ? b.brand : LANG === "en" ? "The Book Man" : "";
+  const quote = q ? q.q : why;
+  card.innerHTML = `${brand ? `<div class="kk">${esc(brand)}</div>` : ""}<h3>${esc(title(b))}</h3><div class="by">${esc(authorLine(b))}</div>
+    ${quote ? `<p class="bq">${esc(quote)}</p>${q && q.p ? `<div class="bq-p">${esc(q.p)}</div>` : ""}` : ""}
+    <div class="two"><div><small>${LANG === "en" ? "CATEGORY" : "분야"}</small><b>${esc(catName(b))}</b></div><div><small>${LANG === "en" ? "PUBLISHED" : "출간"}</small><b>${esc(fmtDate(b.pub))}</b></div></div>
+    <div class="bts">${buy ? `<a class="btn ink" href="${esc(buy.url)}" target="_blank" rel="noopener">${LANG === "en" ? "Buy at Kyobo" : "교보문고에서 사기"} ↗</a>` : ""}<a class="btn" href="#/book/${b.isbn}">${LANG === "en" ? "About this book" : "책 소개 보기"}</a></div>`;
+  if (mob) card.style.top = T2 + ph + 26 + "px";
+  else card.style.left = L + pw + 72 + "px";
+  const x = document.createElement("button");
+  x.className = "sc-x";
+  x.setAttribute("aria-label", LANG === "en" ? "Close" : "닫기");
+  x.textContent = "✕";
+  op.appendChild(sp);
+  op.appendChild(card);
+  op.appendChild(x);
+  op.classList.add("show");
+  if (!mob) card.style.top = Math.max(20, T2 + ph / 2 - card.offsetHeight / 2) + "px";
+  sp.style.transform = `translate(${box.left - sr.left - L}px,${box.top - sr.top - T2}px) scale(${box.height / ph})`;
+  SC.open = { R, i, sp, card, x };
+  el.classList.add("gone");
+  sec.classList.add("opened");
+  sp.offsetWidth;
+  sp.classList.add("fly");
+  requestAnimationFrame(() => {
+    sp.style.transform = "none";
+    op.classList.add("in");
+  });
+  setTimeout(() => {
+    if (SC.open && SC.open.card === card) {
+      card.classList.add("in");
+      x.classList.add("in");
+    }
+  }, 450);
+  x.onclick = () => scClose();
+  op.querySelector(".dim").onclick = () => scClose();
+  window.__scEsc = (e) => {
+    if (e.key === "Escape") scClose();
+  };
+  document.addEventListener("keydown", window.__scEsc);
+}
+function scClose(now) {
+  if (!SC || !SC.open || SC.open.closing) return;
+  const o = SC.open, op = $("#sc-op"), el = o.R.els[o.i];
+  o.closing = true;
+  document.removeEventListener("keydown", window.__scEsc);
+  const done = () => {
+    document.documentElement.style.overflow = "";
+    o.sp.remove();
+    o.card.remove();
+    o.x.remove();
+    op.classList.remove("show", "in");
+    el && el.classList.remove("gone");
+    SC.sec.classList.remove("opened");
+    SC.open = null;
+    SC.hold = Date.now();
+  };
+  if (now) return done();
+  o.card.classList.remove("in");
+  o.x.classList.remove("in");
+  op.classList.remove("in");
+  SC.sec.classList.remove("opened");
+  const box = el.querySelector(".f").getBoundingClientRect(), sr = { left: 0, top: 0 };
+  o.sp.style.transform = `translate(${box.left - sr.left - parseFloat(o.sp.style.left)}px,${box.top - sr.top - parseFloat(o.sp.style.top)}px) scale(${box.height / o.sp.offsetHeight})`;
+  setTimeout(done, 650);
+}
 function home() {
   const shelfBooks = sorted.filter((b) => b.pub <= TODAY && b.cover);
   const cols = [0, 1, 2, 3].map((c) => shelfBooks.filter((_, i) => i % 4 === c).slice(0, 7));
@@ -368,8 +659,8 @@ function home() {
   ${UPCOMING.filter((i) => byIsbn[i]).length >= 3 ? `<section class="sec fade"><div class="wrap">${secHd(LANG === "en" ? "Forthcoming" : "곧 나와요", LANG === "en" ? "Coming soon" : "곧 나올 책")}<div class="rail">${UPCOMING.map((i) => byIsbn[i]).filter(Boolean).map(cardHtml).join("")}</div></div></section>` : ""}
 
   <section class="sec fade"><div class="wrap">
-    ${secHd(t("newK"), t("newH"), "", `<div style="display:flex;gap:20px;align-items:center"><a class="link" href="#/books">${t("seeAll")}</a><div class="arrows"><button onclick="slide('new',-1)" aria-label="prev">←</button><button onclick="slide('new',1)" aria-label="next">→</button></div></div>`)}
-    <div class="rail" id="rail-new">${sorted.slice(0, 15).map(cardHtml).join("")}</div>
+    ${secHd(t("newK"), t("newH"), "", `<a class="link" href="#/books">${t("seeAll")}</a>`)}
+    ${sceneHtml()}
   </div></section>
 
 
@@ -1962,6 +2253,8 @@ function route() {
   $("#ft").innerHTML = footer();
   $("#hdr").classList.remove("open");
   clearInterval(window.__auRoll);
+  clearInterval(window.__scT);
+  SC = null;
   if (k === "" || k === "world" || k === "about" || k === "for-authors") countUp();
   if (k === "") revealLines();
   if (k === "about") aboutReveal();
@@ -1972,6 +2265,7 @@ function route() {
     if (parts[1]) vtFrom = parts[1];
   }
   if (!k) {
+    sceneInit();
     renderWorld(6);
     renderPicks();
     rotateAuthors();
