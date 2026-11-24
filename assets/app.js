@@ -1877,7 +1877,7 @@ function about() {
     <p>그렇게, 좋은 마음으로, 좋은 사람으로 책 읽어주는 남자와 늘 함께해 주십시오.</p>`;
   const en = `<p>Hello. We are <i>The Book Man</i>.</p>
     <p>In 2012 we began sharing one good passage at a time. For years we read, chose and sent out words that comforted people — and the warm replies we received kept us going.</p>
-    <p>Those readers led us to make books of our own. Today THE BOOKMAN publishes essays, fiction, world classics and economic forecasts, and our titles are read in ${WORLD_C.length} countries.</p>
+    <p>Those readers led us to make books of our own. Today THEBOOKMAN publishes essays, fiction, world classics and economic forecasts, and our titles are read in ${WORLD_C.length} countries.</p>
     <p>We still hope to be what we were on day one: a quiet voice before sleep, a kind sentence on a tired day.</p>`;
   return `<div class="wrap"><div class="story">
       <div class="since"><img src="logo/chaek-stack-ink.svg" alt="책 읽어주는 남자" style="width:132px;margin-bottom:36px"><small>Since</small>2012</div>
@@ -1950,7 +1950,7 @@ function docPage(kicker, h1, lead, secs) {
 const ol = (items) => `<ul>${items.map((x, i) => `<li><i>${String(i + 1).padStart(2, "0")}</i><span>${x}</span></li>`).join("")}</ul>`;
 function pressPage() {
   const en = LANG === "en";
-  const boiler = en ? "THE BOOKMAN is a Seoul-based content group that began in 2012 as “The Book Man,” a channel sharing one good passage at a time. It now publishes essays, fiction, humanities, business and children’s books under six imprints — Book Romance, Book Pleasure, Book Moment, Book Farmers, MEOMUM and Book Crayon — and licenses Korean originals to publishers in more than 20 countries." : "더북맨그룹(TBMG)은 2012년 좋은 글 한 편을 나누는 ‘책 읽어주는 남자’에서 시작한 콘텐츠 그룹입니다. 글과 영상으로 독자를 만나고, 북로망스·북플레저·북모먼트·북파머스·머묾·북크레용 여섯 개 출판 브랜드로 에세이, 소설, 인문, 경제·경영, 자녀교육 책을 펴내며, 국내 창작서의 판권을 20여 개 나라에 수출하고 있습니다.";
+  const boiler = en ? "THEBOOKMAN is a Seoul-based content group that began in 2012 as “The Book Man,” a channel sharing one good passage at a time. It now publishes essays, fiction, humanities, business and children’s books under six imprints — Book Romance, Book Pleasure, Book Moment, Book Farmers, MEOMUM and Book Crayon — and licenses Korean originals to publishers in more than 20 countries." : "더북맨그룹(TBMG)은 2012년 좋은 글 한 편을 나누는 ‘책 읽어주는 남자’에서 시작한 콘텐츠 그룹입니다. 글과 영상으로 독자를 만나고, 북로망스·북플레저·북모먼트·북파머스·머묾·북크레용 여섯 개 출판 브랜드로 에세이, 소설, 인문, 경제·경영, 자녀교육 책을 펴내며, 국내 창작서의 판권을 20여 개 나라에 수출하고 있습니다.";
   const logos = en ? [["TBMG (black)", "logo/tbmg-ink.svg"], ["TBMG (white)", "logo/tbmg-white.svg"], ["The Book Man wordmark", "logo/chaek-word-ink.svg"], ["The Book Man wordmark (white)", "logo/chaek-word-white.svg"], ["The Book Man mark", "logo/chaek-stack-ink.svg"]] : [["TBMG (검정)", "logo/tbmg-ink.svg"], ["TBMG (흰색)", "logo/tbmg-white.svg"], ["책 읽어주는 남자", "logo/chaek-word-ink.svg"], ["책 읽어주는 남자 (흰색)", "logo/chaek-word-white.svg"], ["책 읽어주는 남자 마크", "logo/chaek-stack-ink.svg"]];
   const rel = sorted.filter((b) => PRESS.includes(b.isbn));
   return `<div class="wrap"><div class="ph-hd"><div class="crumb"><a href="#/contact">${en ? "Contact" : "문의"}</a></div>
@@ -1975,7 +1975,7 @@ function imprintPage(slug) {
   if (!im) return notFound();
   const en = LANG === "en", L = sorted.filter((b) => b.brand === name), ig = SNS.find((x) => x.name === name);
   return `<div class="wrap"><div class="ph-hd"><div class="crumb"><a href="#/about">${en ? "Our story" : "우리 이야기"}</a></div>
-      <div class="kicker" style="margin-top:14px">${en ? "Imprint of THE BOOKMAN" : "더북맨그룹(TBMG) 출판 브랜드"}</div><h1>${esc(brandName(name))}${en ? "" : ' <span style="font-size:.5em;color:var(--t3)">출판사</span>'}</h1>
+      <div class="kicker" style="margin-top:14px">${en ? "Imprint of THEBOOKMAN" : "더북맨그룹(TBMG) 출판 브랜드"}</div><h1>${esc(brandName(name))}${en ? "" : ' <span style="font-size:.5em;color:var(--t3)">출판사</span>'}</h1>
       <p>${esc(en ? im.en : im.ko)} · ${t("count")(L.length)}</p>
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:24px"><a class="btn" href="#/books?brand=${encodeURIComponent(name)}">${en ? "View in catalog" : "책 목록에서 보기"}</a>${ig ? `<a class="btn" href="${ig.url}" target="_blank" rel="noopener">Instagram @${esc(ig.handle)}</a>` : ""}</div></div>
     <div class="grid" style="padding:56px 0 112px">${L.map(cardHtml).join("")}</div></div>`;
@@ -2142,7 +2142,7 @@ function footer() {
     <div class="ft">
       <div><h4>${t("books")}</h4><ul>${catKeys().slice(0, 6).map((k) => `<li><a href="#/books?cat=${k}">${CAT[k][LANG]}</a></li>`).join("")}</ul></div>
       <div><h4>${t("series")}</h4><ul>${SERIES.slice(0, 6).map((s) => `<li><a href="#/series/${s.key}">${esc(LANG === "en" ? s.en : s.name)}</a></li>`).join("")}</ul></div>
-      <div><h4>THE BOOKMAN</h4><ul><li><a href="#/about">${t("about")}</a></li><li><a href="#/authors">${t("authors")}</a></li><li><a href="#/world">${LANG === "en" ? "Foreign Rights" : "해외 판권"}</a></li></ul></div>
+      <div><h4>THEBOOKMAN</h4><ul><li><a href="#/about">${t("about")}</a></li><li><a href="#/authors">${t("authors")}</a></li><li><a href="#/world">${LANG === "en" ? "Foreign Rights" : "해외 판권"}</a></li></ul></div>
       <div><h4>${LANG === "en" ? "Imprints" : "브랜드"}</h4><ul>${IMPRINTS.map((im) => `<li><a href="#/imprint/${IMPRINT_SLUG[im.name]}">${esc(brandName(im.name))}</a></li>`).join("")}</ul></div>
       <div><h4>Instagram</h4><ul>${SNS.map((x) => `<li><a href="${x.url}" target="_blank" rel="noopener">${LANG === "en" && x.handle === "thebookman_" ? "The Book Man" : brandName(x.name)}<span style="display:block;font-size:11px;color:#8e8c84">@${x.handle}</span></a></li>`).join("")}</ul></div><div><h4>${LANG === "en" ? "Help" : "안내"}</h4><ul><li><a href="#/press">${LANG === "en" ? "Press" : "보도자료"}</a></li><li><a href="#/for-authors">${LANG === "en" ? "For writers" : "작가님께"}</a></li><li><a href="#/submit">${LANG === "en" ? "Manuscripts" : "원고 투고"}</a></li><li><a href="#/permissions">${LANG === "en" ? "Permissions" : "2차 저작권 이용"}</a></li><li><a href="#/careers">${LANG === "en" ? "Careers" : "채용"}</a></li><li><a href="${BOOKLIST}" download>${t("listDl")}</a></li><li><a href="#/contact">${t("contact")}</a></li><li><a href="#/privacy">${LANG === "en" ? "Privacy" : "개인정보 처리방침"}</a></li></ul></div>
     </div>
@@ -2243,12 +2243,12 @@ function route() {
   if (!Object.hasOwn(pages, k)) k = "\0";
   $("#app").innerHTML = (pages[k] || notFound)();
   {
-    const base = LANG === "en" ? "THE BOOKMAN · The Book Man" : "THE BOOKMAN · 책 읽어주는 남자", h1 = document.querySelector("#app h1");
+    const base = LANG === "en" ? "THEBOOKMAN · The Book Man" : "THEBOOKMAN · 책 읽어주는 남자", h1 = document.querySelector("#app h1");
     const h1t = h1 && ((c) => {
       c.querySelectorAll("br").forEach((x) => x.replaceWith(" "));
       return c.textContent.replace(/\s+/g, " ").trim();
     })(h1.cloneNode(true));
-    document.title = !k ? base : !pages[k] ? (LANG === "en" ? "Page not found" : "찾는 페이지가 없습니다") + " — THE BOOKMAN" : (k === "book" && byIsbn[parts[1]] ? title(byIsbn[parts[1]]) : h1t || (T[LANG][k] || "")) + " — THE BOOKMAN";
+    document.title = !k ? base : !pages[k] ? (LANG === "en" ? "Page not found" : "찾는 페이지가 없습니다") + " — THEBOOKMAN" : (k === "book" && byIsbn[parts[1]] ? title(byIsbn[parts[1]]) : h1t || (T[LANG][k] || "")) + " — THEBOOKMAN";
   }
   $("#ft").innerHTML = footer();
   $("#hdr").classList.remove("open");
