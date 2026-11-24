@@ -1882,7 +1882,7 @@ function about() {
   return `<div class="wrap"><div class="story">
       <div class="since"><img src="logo/chaek-stack-ink.svg" alt="책 읽어주는 남자" style="width:132px;margin-bottom:36px"><small>Since</small>2012</div>
       <div><div class="letter">${LANG === "en" ? en : ko}</div>
-        <div class="sign"><img src="logo/tbmg-ink.svg" alt="TBMG" style="height:26px;margin-bottom:12px"><b>TBMG (The Book Man Group)</b>${LANG === "en" ? "" : "<br>책 읽어주는 남자 그룹"}</div></div>
+        <div class="sign"><img src="logo/tbmg-frame-ink.svg" alt="TBMG" style="height:46px;margin-bottom:12px"><b>TBMG (The Book Man Group)</b>${LANG === "en" ? "" : "<br>책 읽어주는 남자 그룹"}</div></div>
     </div></div>
     <!-- 순서 (대표 10-18): 편지 → 그룹 → 출판 브랜드 → 일하는 방식 → 사람 → 문화 → 문의 — 큰 것(무엇을 하는 회사)에서 작은 것(어떻게·누가)으로 -->
     <section class="sec"><div class="wrap">
@@ -2138,7 +2138,7 @@ function careersPage() {
   );
 }
 function footer() {
-  return `<div style="display:flex;gap:28px;align-items:center;margin-bottom:48px"><img src="logo/tbmg-white.svg" alt="TBMG" style="height:26px"><img src="logo/chaek-word-white.svg" alt="책 읽어주는 남자" style="height:30px;opacity:.85"></div>
+  return `<div style="display:flex;gap:28px;align-items:center;margin-bottom:48px"><img src="logo/tbmg-frame-white.svg" alt="TBMG" style="height:46px"><img src="logo/chaek-word-white.svg" alt="책 읽어주는 남자" style="height:30px;opacity:.85"></div>
     <div class="ft">
       <div><h4>${t("books")}</h4><ul>${catKeys().slice(0, 6).map((k) => `<li><a href="#/books?cat=${k}">${CAT[k][LANG]}</a></li>`).join("")}</ul></div>
       <div><h4>${t("series")}</h4><ul>${SERIES.slice(0, 6).map((s) => `<li><a href="#/series/${s.key}">${esc(LANG === "en" ? s.en : s.name)}</a></li>`).join("")}</ul></div>
